@@ -1,0 +1,54 @@
+{
+ "tag_en": "Retrieval copilot (rule-based). Illustrative, verify with official source.",
+ "tag_bn": "রিট্রিভাল কোপাইলট (রুল-ভিত্তিক)। উদাহরণমূলক, সরকারি সূত্রে যাচাই করুন।",
+ "passages": [
+  {
+   "id": "kb-rates",
+   "en_title": "Benchmark rates",
+   "bn_title": "বেঞ্চমার্ক রেট",
+   "en": "Benchmark rates in this demo are illustrative values stored in benchmarks.json. They ignore transport cost and bulk discounts, so a flag is a prompt for review, not a finding of wrongdoing.",
+   "bn": "এই ডেমোর বেঞ্চমার্ক রেট benchmarks.json এ রাখা উদাহরণমূলক মান। পরিবহন খরচ ও বাল্ক ছাড় ধরা হয়নি, তাই ফ্ল্যাগ মানে পর্যালোচনার ইঙ্গিত, অনিয়মের সিদ্ধান্ত নয়।",
+   "kw": "price rate benchmark overpriced expensive cost material দাম রেট মূল্য উপকরণ বেশি বেঞ্চমার্ক"
+  },
+  {
+   "id": "kb-flags",
+   "en_title": "How price flags work",
+   "bn_title": "মূল্য ফ্ল্যাগ কীভাবে কাজ করে",
+   "en": "An item more than 5% above its benchmark is shown amber (Above benchmark). More than 15% above is red (Review recommended). Estimated excess sums only the amounts above 5% flagged items, and a person decides what it means.",
+   "bn": "বেঞ্চমার্কের ৫% এর বেশি হলে অ্যাম্বার (বেঞ্চমার্কের উপরে), ১৫% এর বেশি হলে লাল (পর্যালোচনা সুপারিশকৃত)। আনুমানিক অতিরিক্ত শুধু ৫% এর উপরের আইটেমের টাকা যোগ করে; অর্থ কী তা মানুষ ঠিক করে।",
+   "kw": "flag amber red excess threshold five fifteen ফ্ল্যাগ লাল অ্যাম্বার সীমা"
+  },
+  {
+   "id": "kb-delay",
+   "en_title": "Delay and disbursement checks",
+   "bn_title": "বিলম্ব ও ছাড় যাচাই",
+   "en": "The app compares the deadline with today’s date from your device. It also compares disbursed percent with progress percent. A large gap, or a past deadline with most money disbursed, is marked for review.",
+   "bn": "অ্যাপ সময়সীমাকে আপনার ডিভাইসের আজকের তারিখের সাথে মেলায় এবং ছাড়কৃত শতাংশকে অগ্রগতির সাথে তুলনা করে। বড় ব্যবধান বা সময়সীমা পেরিয়ে বেশিরভাগ টাকা ছাড় হলে পর্যালোচনার জন্য চিহ্নিত হয়।",
+   "kw": "delay late deadline disbursement progress behind বিলম্ব দেরি সময়সীমা ছাড় অগ্রগতি"
+  },
+  {
+   "id": "kb-proc",
+   "en_title": "Procurement guidance (general)",
+   "bn_title": "ক্রয় নির্দেশনা (সাধারণ)",
+   "en": "Public works are normally procured through an open, published tender process. Illustrative, verify with official source: check the current Public Procurement Rules and the e-GP portal for thresholds, durations and penalties.",
+   "bn": "সরকারি কাজ সাধারণত উন্মুক্ত, প্রকাশিত দরপত্র প্রক্রিয়ায় ক্রয় হয়। উদাহরণমূলক, সরকারি সূত্রে যাচাই করুন: সীমা, সময় ও জরিমানার জন্য বর্তমান ক্রয় বিধিমালা ও ই-জিপি পোর্টাল দেখুন।",
+   "kw": "procurement tender ppr egp rules law penalty দরপত্র ক্রয় বিধিমালা ই-জিপি আইন জরিমানা"
+  },
+  {
+   "id": "kb-report",
+   "en_title": "Reporting a problem",
+   "bn_title": "সমস্যা জানানো",
+   "en": "The demo report form saves a report only in your browser with a random ID. It is not transmitted anywhere. For a real complaint, contact the relevant agency or an official anti-corruption channel.",
+   "bn": "ডেমো রিপোর্ট ফর্ম শুধু আপনার ব্রাউজারে র‍্যান্ডম আইডিসহ সংরক্ষণ করে, কোথাও পাঠায় না। প্রকৃত অভিযোগের জন্য সংশ্লিষ্ট সংস্থা বা সরকারি অভিযোগ চ্যানেলে যোগাযোগ করুন।",
+   "kw": "report complain whistle problem issue অভিযোগ রিপোর্ট সমস্যা জানাব"
+  },
+  {
+   "id": "kb-proj",
+   "en_title": "Next-day projection",
+   "bn_title": "পরবর্তী দিনের প্রক্ষেপণ",
+   "en": "The projection is a statistical projection: a least-squares line fitted to the project’s 14 daily progress records. If tomorrow’s forecast rain is high, the slope is reduced by a fixed assumption shown on screen. It is an estimate, not a promise.",
+   "bn": "প্রক্ষেপণ একটি পরিসংখ্যানিক প্রক্ষেপণ: প্রকল্পের ১৪টি দৈনিক অগ্রগতি রেকর্ডে লিস্ট-স্কয়ার্স রেখা। আগামীকালের বৃষ্টির পূর্বাভাস বেশি হলে ঢাল নির্দিষ্ট অনুমানে কমানো হয়। এটি অনুমান, প্রতিশ্রুতি নয়।",
+   "kw": "projection forecast tomorrow next day predict regression প্রক্ষেপণ পূর্বাভাস আগামীকাল পরবর্তী"
+  }
+ ]
+}

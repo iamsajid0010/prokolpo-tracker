@@ -1,0 +1,62 @@
+{
+ "disclaimer_en": "Illustrative rates. Verify with official PWD schedule. Ignores transport and bulk discounts.",
+ "disclaimer_bn": "উদাহরণমূলক রেট। সরকারি পিডব্লিউডি শিডিউলের সাথে যাচাই করুন। পরিবহন ও বাল্ক ছাড় ধরা হয়নি।",
+ "materials": {
+  "rod": {
+   "en": "500W TMT Steel Rod",
+   "bn": "৫০০ডব্লিউ টিএমটি রড",
+   "unit": "kg",
+   "rate": 92,
+   "supplier": "Demo Steel Co."
+  },
+  "cement": {
+   "en": "Portland Composite Cement",
+   "bn": "পোর্টল্যান্ড কম্পোজিট সিমেন্ট",
+   "unit": "bag",
+   "rate": 560,
+   "supplier": "Demo Cement Ltd."
+  },
+  "brick": {
+   "en": "1st Class Brick",
+   "bn": "১ম শ্রেণির ইট",
+   "unit": "pc",
+   "rate": 13.5,
+   "supplier": "Demo Bricks Ltd."
+  },
+  "sand": {
+   "en": "Sylhet Sand",
+   "bn": "সিলেট বালু",
+   "unit": "cft",
+   "rate": 62,
+   "supplier": "Demo Aggregates Co."
+  },
+  "chips": {
+   "en": "Stone Chips 20mm",
+   "bn": "পাথর কুচি ২০মিমি",
+   "unit": "cft",
+   "rate": 215,
+   "supplier": "Demo Aggregates Co."
+  },
+  "bitumen": {
+   "en": "Bitumen 60/70",
+   "bn": "বিটুমিন ৬০/৭০",
+   "unit": "kg",
+   "rate": 78,
+   "supplier": "Demo Bitumen Supply"
+  },
+  "pipe": {
+   "en": "RCC Pipe 900mm",
+   "bn": "আরসিসি পাইপ ৯০০মিমি",
+   "unit": "rft",
+   "rate": 2850,
+   "supplier": "Demo Pipe Works"
+  },
+  "panel": {
+   "en": "Solar Panel 550W",
+   "bn": "সোলার প্যানেল ৫৫০ওয়াট",
+   "unit": "pc",
+   "rate": 21500,
+   "supplier": "Demo Solar Imports"
+  }
+ }
+}

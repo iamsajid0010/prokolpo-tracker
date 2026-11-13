@@ -1,0 +1,503 @@
+{
+ "note_en": "Demo list. Verify names with official LGD data.",
+ "note_bn": "ডেমো তালিকা। সরকারি এলজিডি ডেটার সাথে যাচাই করুন।",
+ "divisions": [
+  {
+   "id": "dhaka",
+   "en": "Dhaka",
+   "bn": "ঢাকা",
+   "districts": [
+    {
+     "id": "dhaka",
+     "en": "Dhaka",
+     "bn": "ঢাকা",
+     "upazilas": [
+      {
+       "id": "savar",
+       "en": "Savar",
+       "bn": "সাভার",
+       "unions": [
+        {
+         "id": "ashulia",
+         "en": "Ashulia",
+         "bn": "আশুলিয়া",
+         "hasData": true
+        },
+        {
+         "id": "birulia",
+         "en": "Birulia",
+         "bn": "বিরুলিয়া",
+         "hasData": true
+        },
+        {
+         "id": "pathalia",
+         "en": "Pathalia",
+         "bn": "পাথালিয়া",
+         "hasData": false
+        }
+       ]
+      },
+      {
+       "id": "dhamrai",
+       "en": "Dhamrai",
+       "bn": "ধামরাই",
+       "unions": [
+        {
+         "id": "kulla",
+         "en": "Kulla",
+         "bn": "কুল্লা",
+         "hasData": false
+        },
+        {
+         "id": "suapur",
+         "en": "Suapur",
+         "bn": "সুয়াপুর",
+         "hasData": false
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "gazipur",
+     "en": "Gazipur",
+     "bn": "গাজীপুর",
+     "upazilas": [
+      {
+       "id": "kaliakair",
+       "en": "Kaliakair",
+       "bn": "কালিয়াকৈর",
+       "unions": [
+        {
+         "id": "mouchak",
+         "en": "Mouchak",
+         "bn": "মৌচাক",
+         "hasData": false
+        },
+        {
+         "id": "boherarchala",
+         "en": "Boherarchala",
+         "bn": "বাহেরচালা",
+         "hasData": false
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "chattogram",
+   "en": "Chattogram",
+   "bn": "চট্টগ্রাম",
+   "districts": [
+    {
+     "id": "chattogram",
+     "en": "Chattogram",
+     "bn": "চট্টগ্রাম",
+     "upazilas": [
+      {
+       "id": "sitakunda",
+       "en": "Sitakunda",
+       "bn": "সীতাকুণ্ড",
+       "unions": [
+        {
+         "id": "barabkunda",
+         "en": "Barabkunda",
+         "bn": "বারবকুণ্ড",
+         "hasData": true
+        },
+        {
+         "id": "sonaichhari",
+         "en": "Sonaichhari",
+         "bn": "সোনাইছড়ি",
+         "hasData": false
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "coxs-bazar",
+     "en": "Cox's Bazar",
+     "bn": "কক্সবাজার",
+     "upazilas": [
+      {
+       "id": "ramu",
+       "en": "Ramu",
+       "bn": "রামু",
+       "unions": [
+        {
+         "id": "eidgarh",
+         "en": "Eidgarh",
+         "bn": "ঈদগড়",
+         "hasData": false
+        },
+        {
+         "id": "garjania",
+         "en": "Garjania",
+         "bn": "গর্জনিয়া",
+         "hasData": false
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "rajshahi",
+   "en": "Rajshahi",
+   "bn": "রাজশাহী",
+   "districts": [
+    {
+     "id": "rajshahi",
+     "en": "Rajshahi",
+     "bn": "রাজশাহী",
+     "upazilas": [
+      {
+       "id": "paba",
+       "en": "Paba",
+       "bn": "পবা",
+       "unions": [
+        {
+         "id": "haripur",
+         "en": "Haripur",
+         "bn": "হরিপুর",
+         "hasData": false
+        },
+        {
+         "id": "naohata",
+         "en": "Naohata",
+         "bn": "নওহাটা",
+         "hasData": false
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "bogura",
+     "en": "Bogura",
+     "bn": "বগুড়া",
+     "upazilas": [
+      {
+       "id": "shibganj",
+       "en": "Shibganj",
+       "bn": "শিবগঞ্জ",
+       "unions": [
+        {
+         "id": "maidanhatta",
+         "en": "Maidanhatta",
+         "bn": "মাদলা",
+         "hasData": false
+        },
+        {
+         "id": "bihar",
+         "en": "Bihar",
+         "bn": "বিহার",
+         "hasData": false
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "khulna",
+   "en": "Khulna",
+   "bn": "খুলনা",
+   "districts": [
+    {
+     "id": "khulna",
+     "en": "Khulna",
+     "bn": "খুলনা",
+     "upazilas": [
+      {
+       "id": "dacope",
+       "en": "Dacope",
+       "bn": "দাকোপ",
+       "unions": [
+        {
+         "id": "banishanta",
+         "en": "Banishanta",
+         "bn": "বানিশান্তা",
+         "hasData": false
+        },
+        {
+         "id": "kamarkhola",
+         "en": "Kamarkhola",
+         "bn": "কামারখোলা",
+         "hasData": false
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "jashore",
+     "en": "Jashore",
+     "bn": "যশোর",
+     "upazilas": [
+      {
+       "id": "sharsha",
+       "en": "Sharsha",
+       "bn": "শার্শা",
+       "unions": [
+        {
+         "id": "benapole",
+         "en": "Benapole",
+         "bn": "বেনাপোল",
+         "hasData": false
+        },
+        {
+         "id": "putkhali",
+         "en": "Putkhali",
+         "bn": "পুটখালী",
+         "hasData": false
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sylhet",
+   "en": "Sylhet",
+   "bn": "সিলেট",
+   "districts": [
+    {
+     "id": "sylhet",
+     "en": "Sylhet",
+     "bn": "সিলেট",
+     "upazilas": [
+      {
+       "id": "jaintiapur",
+       "en": "Jaintiapur",
+       "bn": "জৈন্তাপুর",
+       "unions": [
+        {
+         "id": "charikatha",
+         "en": "Charikatha",
+         "bn": "চারিকাটা",
+         "hasData": false
+        },
+        {
+         "id": "darbast",
+         "en": "Darbast",
+         "bn": "দরবস্ত",
+         "hasData": false
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "moulvibazar",
+     "en": "Moulvibazar",
+     "bn": "মৌলভীবাজার",
+     "upazilas": [
+      {
+       "id": "sreemangal",
+       "en": "Sreemangal",
+       "bn": "শ্রীমঙ্গল",
+       "unions": [
+        {
+         "id": "kalapur",
+         "en": "Kalapur",
+         "bn": "কালাপুর",
+         "hasData": false
+        },
+        {
+         "id": "bhunabir",
+         "en": "Bhunabir",
+         "bn": "ভুনবীর",
+         "hasData": false
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "barishal",
+   "en": "Barishal",
+   "bn": "বরিশাল",
+   "districts": [
+    {
+     "id": "barishal",
+     "en": "Barishal",
+     "bn": "বরিশাল",
+     "upazilas": [
+      {
+       "id": "babuganj",
+       "en": "Babuganj",
+       "bn": "বাবুগঞ্জ",
+       "unions": [
+        {
+         "id": "chandpasha",
+         "en": "Chandpasha",
+         "bn": "চাঁদপাশা",
+         "hasData": false
+        },
+        {
+         "id": "rahmatpur",
+         "en": "Rahmatpur",
+         "bn": "রহমতপুর",
+         "hasData": false
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "patuakhali",
+     "en": "Patuakhali",
+     "bn": "পটুয়াখালী",
+     "upazilas": [
+      {
+       "id": "kalapara",
+       "en": "Kalapara",
+       "bn": "কলাপাড়া",
+       "unions": [
+        {
+         "id": "mithaganj",
+         "en": "Mithaganj",
+         "bn": "মিঠাগঞ্জ",
+         "hasData": false
+        },
+        {
+         "id": "dhulasar",
+         "en": "Dhulasar",
+         "bn": "ধুলাসার",
+         "hasData": false
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "rangpur",
+   "en": "Rangpur",
+   "bn": "রংপুর",
+   "districts": [
+    {
+     "id": "rangpur",
+     "en": "Rangpur",
+     "bn": "রংপুর",
+     "upazilas": [
+      {
+       "id": "mithapukur",
+       "en": "Mithapukur",
+       "bn": "মিঠাপুকুর",
+       "unions": [
+        {
+         "id": "balarhat",
+         "en": "Balarhat",
+         "bn": "বালারহাট",
+         "hasData": false
+        },
+        {
+         "id": "payrabond",
+         "en": "Payrabond",
+         "bn": "পায়রাবন্দ",
+         "hasData": false
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "dinajpur",
+     "en": "Dinajpur",
+     "bn": "দিনাজপুর",
+     "upazilas": [
+      {
+       "id": "birampur",
+       "en": "Birampur",
+       "bn": "বিরামপুর",
+       "unions": [
+        {
+         "id": "katla",
+         "en": "Katla",
+         "bn": "কাটলা",
+         "hasData": false
+        },
+        {
+         "id": "mukundapur",
+         "en": "Mukundapur",
+         "bn": "মুকুন্দপুর",
+         "hasData": false
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "mymensingh",
+   "en": "Mymensingh",
+   "bn": "ময়মনসিংহ",
+   "districts": [
+    {
+     "id": "mymensingh",
+     "en": "Mymensingh",
+     "bn": "ময়মনসিংহ",
+     "upazilas": [
+      {
+       "id": "trishal",
+       "en": "Trishal",
+       "bn": "ত্রিশাল",
+       "unions": [
+        {
+         "id": "dhanikhola",
+         "en": "Dhanikhola",
+         "bn": "ধানীখোলা",
+         "hasData": false
+        },
+        {
+         "id": "bailor",
+         "en": "Bailor",
+         "bn": "বৈলর",
+         "hasData": false
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "netrokona",
+     "en": "Netrokona",
+     "bn": "নেত্রকোণা",
+     "upazilas": [
+      {
+       "id": "durgapur",
+       "en": "Durgapur",
+       "bn": "দুর্গাপুর",
+       "unions": [
+        {
+         "id": "kullagora",
+         "en": "Kullagora",
+         "bn": "কুল্লাগড়া",
+         "hasData": false
+        },
+        {
+         "id": "birisiri",
+         "en": "Birisiri",
+         "bn": "বিরিশিরি",
+         "hasData": false
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

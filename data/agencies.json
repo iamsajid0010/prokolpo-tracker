@@ -1,0 +1,27 @@
+{
+ "LGED": {
+  "bn": "এলজিইডি",
+  "ministry_en": "Ministry of Local Government (demo label)",
+  "ministry_bn": "স্থানীয় সরকার মন্ত্রণালয় (ডেমো লেবেল)"
+ },
+ "RHD": {
+  "bn": "সওজ",
+  "ministry_en": "Ministry of Roads and Bridges (demo label)",
+  "ministry_bn": "সড়ক ও সেতু মন্ত্রণালয় (ডেমো লেবেল)"
+ },
+ "DPHE": {
+  "bn": "ডিপিএইচই",
+  "ministry_en": "Ministry of Local Government (demo label)",
+  "ministry_bn": "স্থানীয় সরকার মন্ত্রণালয় (ডেমো লেবেল)"
+ },
+ "PWD": {
+  "bn": "গণপূর্ত",
+  "ministry_en": "Ministry of Housing and Public Works (demo label)",
+  "ministry_bn": "গৃহায়ন ও গণপূর্ত মন্ত্রণালয় (ডেমো লেবেল)"
+ },
+ "BWDB": {
+  "bn": "পাউবো",
+  "ministry_en": "Ministry of Water Resources (demo label)",
+  "ministry_bn": "পানি সম্পদ মন্ত্রণালয় (ডেমো লেবেল)"
+ }
+}

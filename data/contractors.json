@@ -1,0 +1,38 @@
+{
+ "K1": {
+  "name": "Demo Builders Ltd.",
+  "bn": "ডেমো বিল্ডার্স লিমিটেড",
+  "score": 82,
+  "priorDelays": 1
+ },
+ "K2": {
+  "name": "Demo Roadworks Ltd.",
+  "bn": "ডেমো রোডওয়ার্কস লিমিটেড",
+  "score": 54,
+  "priorDelays": 4
+ },
+ "K3": {
+  "name": "Demo Bridge Engineering",
+  "bn": "ডেমো ব্রিজ ইঞ্জিনিয়ারিং",
+  "score": 71,
+  "priorDelays": 2
+ },
+ "K4": {
+  "name": "Demo Drainage Co.",
+  "bn": "ডেমো ড্রেনেজ কোং",
+  "score": 38,
+  "priorDelays": 6
+ },
+ "K5": {
+  "name": "Demo Solar Works",
+  "bn": "ডেমো সোলার ওয়ার্কস",
+  "score": 88,
+  "priorDelays": 0
+ },
+ "K6": {
+  "name": "Demo Coastal Works",
+  "bn": "ডেমো কোস্টাল ওয়ার্কস",
+  "score": 61,
+  "priorDelays": 3
+ }
+}
