@@ -1,4 +1,5 @@
 import * as C from './core.js';
+import { mapHTML, mapListHTML } from './map.js';
 const { t, esc, fmt, bdt, nm, dig, pill, $, $$, store, D } = C;
 const sel = store.get('sel', { d: 'dhaka', s: 'dhaka', u: 'savar', n: 'ashulia' });
 let pi = 0, tab = 'overview', role = store.get('role', 'citizen'), W = null, chat = [], nodeId = null;
@@ -16,9 +17,18 @@ const selectors = G => `<div class="card"><div class="grid g4">
 const roleBar = () => `<div class="row" role="group" aria-label="${t('View mode', 'ভিউ মোড')}"><span class="b sm">${t('View as', 'দেখুন')}:</span>${[['citizen', 'Citizen', 'নাগরিক'], ['journalist', 'Journalist', 'সাংবাদিক'], ['overseer', 'Union Overseer', 'ইউনিয়ন তদারক']].map(r => `<button class="btn ${role === r[0] ? 'on' : ''}" data-role="${r[0]}" aria-pressed="${role === r[0]}">${t(r[1], r[2])}</button>`).join('')}<span class="sm mute">${t('UI mode only. No special access.', 'শুধু ইন্টারফেস মোড। বিশেষ অ্যাক্সেস নয়।')}</span></div>`;
 const onboard = () => store.get('onb', false) ? '' : `<div class="card" style="border-color:var(--em)"><div class="row" style="justify-content:space-between"><h2>${t('Start here: 2-minute walkthrough', 'এখানে শুরু: ২ মিনিটের ওয়াকথ্রু')}</h2><button class="btn" data-act="onb">${t('Dismiss', 'বন্ধ করুন')}</button></div><ol><li>${t('Ashulia Union is already selected with sample data.', 'আশুলিয়া ইউনিয়ন নমুনা ডেটাসহ নির্বাচিত।')}</li><li>${t('Open a project card, then the Price audit tab.', 'একটি প্রকল্প কার্ড খুলে মূল্য নিরীক্ষা ট্যাব দেখুন।')}</li><li>${t('Read the projection formula in Overview.', 'ওভারভিউতে প্রক্ষেপণের সূত্র পড়ুন।')}</li><li>${t('Ask the copilot: “Which materials are above benchmark?”', 'কোপাইলটকে জিজ্ঞাসা করুন: “কোন উপকরণ বেঞ্চমার্কের উপরে?”')}</li></ol></div>`;
 
+
+let mapOn = false;
+function findUnion(id) { for (const d of D.geo.divisions) for (const s of d.districts) for (const u of s.upazilas) for (const n of u.unions) if (n.id === id) return { n, u, s, d }; return null; }
+function gmapCard(p) {
+  const f = findUnion(p.union); if (!f || f.n.lat == null) return '';
+  const q = f.n.lat + ',' + f.n.lng, link = 'https://www.google.com/maps?q=' + q, name = nm(f.n) + ', ' + nm(f.u) + ', ' + nm(f.s);
+  const body = mapOn && !C.S.lite ? `<iframe title="${esc(t('Google Map of ', 'গুগল ম্যাপ: ') + name)}" src="https://www.google.com/maps?q=${q}&z=13&output=embed" loading="lazy" referrerpolicy="no-referrer" allowfullscreen></iframe>` : `<div class="mapph"><p><b>${esc(name)}</b><br><span class="sm mute">${t('Approximate location', 'আনুমানিক অবস্থান')}: ${fmt(f.n.lat, 4)}, ${fmt(f.n.lng, 4)}</span></p>${C.S.lite ? '' : `<button class="btn pri" type="button" data-loadmap>${t('Load interactive Google Map', 'ইন্টারঅ্যাক্টিভ গুগল ম্যাপ লোড করুন')}</button> `}<a class="btn" href="${link}" target="_blank" rel="noopener noreferrer">${t('Open in Google Maps', 'গুগল ম্যাপে খুলুন')}</a></div>`;
+  return `<div class="card" style="margin-top:12px"><h3>${t('Locate on map', 'মানচিত্রে অবস্থান')} <span class="tag implemented">${t('Implemented', 'বাস্তবায়িত')}</span></h3><div class="mapbox">${body}</div><p class="sm mute">${t('Third-party content: the map loads from Google only after you click, and Google may receive your IP address. Nothing else on this site contacts Google. ' + D.geo.coord_note_en, 'তৃতীয় পক্ষের কনটেন্ট: আপনি ক্লিক করলেই গুগল থেকে মানচিত্র লোড হয়, গুগল আপনার আইপি ঠিকানা পেতে পারে। এই সাইটের আর কিছু গুগলের সাথে যোগাযোগ করে না। ' + D.geo.coord_note_bn)}</p></div>`;
+}
 function card(p, i) {
   const a = C.auditProject(p);
-  return `<button class="card" data-pi="${i}" style="text-align:left;width:100%;${i === pi ? 'border-color:var(--em);border-width:2px' : ''}" aria-pressed="${i === pi}"><div class="row"><span class="pill">${p.agency}</span>${a.ds.past && a.prog < 100 ? pill('bad', t('Past deadline', 'সময়সীমা পেরিয়েছে')) : ''}${a.flagged ? pill(a.rows.some(r => r.level === 'bad') ? 'bad' : 'warn', fmt(a.flagged) + ' ' + t('price flags', 'মূল্য ফ্ল্যাগ')) : pill('ok', t('Prices within 5%', 'মূল্য ৫% এর মধ্যে'))}${a.red.length ? pill('bad', '⚑ ' + fmt(a.red.length)) : ''}</div><h3 style="margin-top:6px">${esc(nm(p))}</h3><div class="bar" role="progressbar" aria-valuenow="${a.prog}" aria-valuemin="0" aria-valuemax="100"><i style="width:${a.prog}%"></i></div><div class="sm">${fmt(a.prog, 1)}% · ${bdt(p.budget)}</div></button>`;
+  return `<button class="card" data-pi="${i}" style="text-align:left;width:100%;${i === pi ? 'border-color:var(--em);border-width:2px' : ''}" aria-pressed="${i === pi}">${C.S.lite ? '' : `<img class="pimg" src="../assets/img/${esc(p.kind)}.svg" alt="" width="400" height="225" loading="lazy">`}<div class="row"><span class="pill">${C.agHTML(p.agency)}</span>${a.ds.past && a.prog < 100 ? pill('bad', t('Past deadline', 'সময়সীমা পেরিয়েছে')) : ''}${a.flagged ? pill(a.rows.some(r => r.level === 'bad') ? 'bad' : 'warn', fmt(a.flagged) + ' ' + t('price flags', 'মূল্য ফ্ল্যাগ')) : pill('ok', t('Prices within 5%', 'মূল্য ৫% এর মধ্যে'))}${a.red.length ? pill('bad', '⚑ ' + fmt(a.red.length)) : ''}</div><h3 style="margin-top:6px">${esc(nm(p))}</h3><div class="bar" role="progressbar" aria-valuenow="${a.prog}" aria-valuemin="0" aria-valuemax="100"><i style="width:${a.prog}%"></i></div><div class="sm">${fmt(a.prog, 1)}% · ${bdt(p.budget)}</div></button>`;
 }
 function chartHTML(p, pr) {
   if (C.S.lite) return `<div class="tw"><table><thead><tr><th>${t('Date', 'তারিখ')}</th><th class="n">${t('Progress %', 'অগ্রগতি %')}</th></tr></thead><tbody>${p.daily.map(d => `<tr><td>${dig(d.d)}</td><td class="n">${fmt(d.p, 2)}</td></tr>`).join('')}</tbody></table></div>`;
@@ -38,7 +48,7 @@ function overview(p, a) {
   }
   const C1 = D.contractors[p.contractor];
   return `<div class="grid g4"><div><div class="sm mute">${t('Budget', 'বাজেট')}</div><div class="big">${bdt(p.budget)}</div></div><div><div class="sm mute">${t('Disbursed', 'ছাড়কৃত')}</div><div class="big">${bdt(Math.min(p.disbursed, p.budget))}</div><div class="sm">${fmt(a.disbPct, 1)}% ${t('of budget', 'বাজেটের')}</div></div>
-  <div><div class="sm mute">${t('Contractor (fictional)', 'ঠিকাদার (কাল্পনিক)')}</div><div class="b">${esc(nm(C1))}</div><div class="sm">${t('Track record (synthetic)', 'ট্র্যাক রেকর্ড (কৃত্রিম)')}: ${fmt(C1.score)}/100</div></div>
+  <div><div class="sm mute">${t('Contractor (fictional)', 'ঠিকাদার (কাল্পনিক)')}</div><div class="b">${esc(nm(C1))}</div><div class="sm">${t('Track record (synthetic)', 'ট্র্যাক রেকর্ড (কৃত্রিম)')}: ${fmt(C1.score)}/${dig(100)}</div></div>
   <div><div class="sm mute">${t('Start → Deadline', 'শুরু → সময়সীমা')}</div><div class="b">${dig(p.start)} → ${dig(p.deadline)}</div><div class="sm">${a.ds.past ? pill('bad', t('Past by ' + a.ds.daysPast + ' days', fmt(a.ds.daysPast) + ' দিন পেরিয়েছে')) : pill('ok', t(a.ds.days + ' days left', fmt(a.ds.days) + ' দিন বাকি'))}</div></div></div>
   <div class="row" style="margin:10px 0">${C.flagPills(a) || pill('ok', t('No disbursement or deadline red flags', 'ছাড় বা সময়সীমার কোনো লাল ফ্ল্যাগ নেই'))}</div>${proj}`;
 }
@@ -57,8 +67,8 @@ function roleExtra(p, a) {
 }
 function copilotHTML(p) {
   return `<div class="card"><div class="row"><h3>${t('Retrieval copilot (rule-based)', 'রিট্রিভাল কোপাইলট (রুল-ভিত্তিক)')}</h3><span class="tag implemented">${t('Implemented', 'বাস্তবায়িত')}</span></div><p class="sm mute">${esc(t(D.kb.tag_en, D.kb.tag_bn))}</p>
-  <div class="chat" aria-live="polite">${chat.map(m => `<div class="msg ${m.r}">${esc(m.x)}${m.c ? `<div class="sm mute">${t('Source: ', 'সূত্র: ')}${esc(m.c.join(' · '))}</div>` : ''}</div>`).join('') || `<div class="msg a">${t('Ask about prices, delays, the projection, procurement or reporting.', 'দাম, বিলম্ব, প্রক্ষেপণ, ক্রয় বা অভিযোগ নিয়ে জিজ্ঞাসা করুন।')}</div>`}</div>
-  <div class="row" style="margin:8px 0">${[['Which materials are above benchmark?', 'কোন উপকরণ বেঞ্চমার্কের উপরে?'], ['Is this project delayed?', 'প্রকল্পটি কি বিলম্বিত?']].map(s => `<button class="btn" data-ask="${esc(t(s[0], s[1]))}">${t(s[0], s[1])}</button>`).join('')}</div>
+  <div class="chat" aria-live="polite">${chat.map(m => `<div class="msg ${m.r}">${esc(m.x)}${m.ex ? `<div class="row" style="margin-top:6px">${m.ex.map(e => `<button class="btn" data-ask="${esc(e)}">${esc(e)}</button>`).join('')}</div>` : ''}${m.c && m.c.length ? `<div class="sm mute">${t('Source: ', 'সূত্র: ')}${esc(m.c.join(' · '))}</div>` : ''}</div>`).join('') || `<div class="msg a">${t('Ask about prices, delays, the projection, procurement or reporting.', 'দাম, বিলম্ব, প্রক্ষেপণ, ক্রয় বা অভিযোগ নিয়ে জিজ্ঞাসা করুন।')}</div>`}</div>
+  <div class="row" style="margin:8px 0">${C.CHIPS.map(s => `<button class="btn" data-ask="${esc(t(s[0], s[1]))}">${t(s[0], s[1])}</button>`).join('')}</div>
   <div class="row" style="flex-wrap:nowrap"><label class="f" style="flex:1"><span class="sm">${t('Question', 'প্রশ্ন')}</span><input type="text" id="q" data-bn-ph="প্রশ্ন লিখুন" placeholder="Type a question"></label><button class="btn pri" data-act="ask">${t('Ask', 'জিজ্ঞাসা')}</button><button class="btn" data-act="voice" aria-label="${t('Voice input', 'ভয়েস ইনপুট')}">🎤</button></div></div>`;
 }
 function render() {
@@ -71,27 +81,31 @@ function render() {
     const tabs = [['overview', t('Overview', 'ওভারভিউ')], ['audit', t('Price audit', 'মূল্য নিরীক্ষা')], ['log', t('Daily log', 'দৈনিক লগ')]];
     main = `<h2>${esc(nm(un))} · ${t('projects', 'প্রকল্প')}</h2><div class="grid g4" style="margin:10px 0"><div class="card"><div class="sm mute">${t('Projects', 'প্রকল্প')}</div><div class="big">${fmt(ps.length)}</div></div><div class="card"><div class="sm mute">${t('Budget', 'বাজেট')}</div><div class="big">${bdt(b)}</div></div><div class="card"><div class="sm mute">${t('Disbursed', 'ছাড়কৃত')}</div><div class="big">${bdt(d)}</div></div><div class="card"><div class="sm mute">${t('Items for review', 'পর্যালোচনার আইটেম')}</div><div class="big">${fmt(au.reduce((s, x) => s + x.flagged + x.red.length, 0))}</div></div></div>
     <div class="grid g3">${ps.map(card).join('')}</div>
-    <div class="card" style="margin-top:12px"><h2>${esc(nm(p))}</h2><div class="sm mute">${p.id} · ${p.agency} · ${esc(nm(D.agencies[p.agency].ministry_en ? { en: D.agencies[p.agency].ministry_en, bn: D.agencies[p.agency].ministry_bn } : p))}</div>
-    <div class="tabs" role="tablist">${tabs.map(x => `<button role="tab" aria-selected="${tab === x[0]}" data-tab="${x[0]}">${x[1]}</button>`).join('')}</div>${tab === 'overview' ? overview(p, a) : tab === 'audit' ? C.priceTableHTML(p, a) : logs(p)}</div>
-    <div class="grid g2" style="margin-top:12px">${roleExtra(p, a)}<div class="card"><h3>${t('Knowledge graph', 'নলেজ গ্রাফ')}</h3>${C.graphHTML(p)}<p class="sm" id="node-d" aria-live="polite">${nodeId ? esc(C.nodeDetails(p, nodeId)) : t('Select a node for details.', 'বিস্তারিত দেখতে নোড নির্বাচন করুন।')}</p></div>${copilotHTML(p)}</div>`;
+    <div class="card" style="margin-top:12px">${C.S.lite ? '' : `<figure class="banner"><img src="../assets/img/${esc(p.kind)}.svg" alt="${esc(t('Illustration of a ' + p.kind + ' project', 'প্রকল্পের চিত্র'))}" width="800" height="450"><figcaption>${t('Illustrative drawing, not a photo of the real site.', 'চিত্রটি উদাহরণমূলক অঙ্কন, প্রকৃত স্থানের ছবি নয়।')}</figcaption></figure>`}<h2>${esc(nm(p))}</h2><div class="sm mute">${esc(p.id)} · ${esc(C.agTxt(p.agency))} · ${esc(nm(D.agencies[p.agency].ministry_en ? { en: D.agencies[p.agency].ministry_en, bn: D.agencies[p.agency].ministry_bn } : p))}</div>
+    <div class="tabs" role="tablist">${tabs.map(x => `<button role="tab" aria-selected="${tab === x[0]}" data-tab="${x[0]}">${x[1]}</button>`).join('')}</div>${tab === 'overview' ? overview(p, a) + gmapCard(p) : tab === 'audit' ? C.priceTableHTML(p, a) : logs(p)}</div>
+    <div style="margin-top:12px">${roleExtra(p, a)}</div><div class="grid" style="margin-top:12px"><div class="card"><h3>${t('Knowledge graph', 'নলেজ গ্রাফ')}</h3>${C.graphHTML(p)}<p class="sm" id="node-d" aria-live="polite">${nodeId ? esc(C.nodeDetails(p, nodeId)) : t('Select a node for details.', 'বিস্তারিত দেখতে নোড নির্বাচন করুন।')}</p></div>${copilotHTML(p)}</div>`;
   }
-  root.innerHTML = onboard() + `<div class="grid">${selectors(G)}${roleBar()}</div>` + `<div style="height:12px"></div>` + main;
+  const mapCard = `<div class="card"><div class="row" style="justify-content:space-between"><h2>${t('Map', 'মানচিত্র')}</h2><span class="tag implemented">${t('Implemented', 'বাস্তবায়িত')}</span></div><p class="sm mute">${t('Schematic outline for orientation, not an official boundary. Click a division or a ★ union.', 'দিকনির্দেশের জন্য পরিকল্পিত রূপরেখা, সরকারি সীমানা নয়। বিভাগ বা ★ ইউনিয়নে ক্লিক করুন।')}</p>${C.S.lite ? mapListHTML() : mapHTML(sel)}</div>`;
+  root.innerHTML = onboard() + `<div class="mapgrid">${mapCard}<div class="grid" style="align-content:start">${selectors(G)}${roleBar()}</div></div>` + `<div style="height:12px"></div>` + main;
   C.applyLangPh?.();
 }
 async function init() {
-  await C.loadAll(); C.initShell(); render(); C.onLang(render);
+  await C.loadAll(); C.initShell(); render(); C.onLang(render); let wideNow = matchMedia('(max-width:760px)').matches; addEventListener('resize', () => { const m = matchMedia('(max-width:760px)').matches; if (m !== wideNow) { wideNow = m; render(); } });
   C.getWeather().then(w => { W = w; render(); });
   const root = $('#app-root');
   root.addEventListener('change', e => { const lv = e.target.dataset.lv; if (!lv) return; sel[lv] = e.target.value; if (lv === 'd') sel.s = sel.u = sel.n = ''; if (lv === 's') sel.u = sel.n = ''; if (lv === 'u') sel.n = ''; store.set('sel', sel); pi = 0; render(); });
   C.delegate(root, 'click', '[data-q]', b => { const [d, s, u, n] = b.dataset.q.split('/'); Object.assign(sel, { d, s, u, n }); store.set('sel', sel); pi = 0; tab = 'overview'; render(); });
+  C.delegate(root, 'click', '[data-mapdiv]', g => { Object.assign(sel, { d: g.dataset.mapdiv, s: '', u: '', n: '' }); store.set('sel', sel); pi = 0; tab = 'overview'; render(); });
+  C.delegate(root, 'click', '[data-mappin]', g => { const f = C.findUnion(g.dataset.mappin); if (!f) return; Object.assign(sel, { d: f.d.id, s: f.s.id, u: f.u.id, n: f.n.id }); store.set('sel', sel); pi = 0; tab = 'overview'; render(); });
   C.delegate(root, 'click', '[data-role]', b => { role = b.dataset.role; store.set('role', role); render(); });
   C.delegate(root, 'click', '[data-pi]', b => { pi = +b.dataset.pi; render(); });
+  C.delegate(root, 'click', '[data-loadmap]', () => { mapOn = true; render(); });
   C.delegate(root, 'click', '[data-tab]', b => { tab = b.dataset.tab; render(); });
   C.delegate(root, 'click', '[data-vote]', b => { const [k, id] = b.dataset.vote.split('|'); const v = votes(); if (v[id] === k) delete v[id]; else v[id] = k; store.set('votes', v); render(); });
   C.delegate(root, 'click', '[data-rev]', b => { const r = rev(); r[b.dataset.rev] ? delete r[b.dataset.rev] : r[b.dataset.rev] = true; store.set('reviewed', r); render(); });
   C.delegate(root, 'click', '[data-node]', g => { nodeId = g.dataset.node; const p = C.unionProjects(sel.n)[pi]; $('#node-d').textContent = C.nodeDetails(p, nodeId); });
-  C.delegate(root, 'keydown', '[data-node]', (g, e) => { if (e.key === 'Enter' || e.key === ' ') g.dispatchEvent(new Event('click', { bubbles: true })); });
-  const ask = q => { q = (q || '').trim(); if (!q) return; const p = C.unionProjects(sel.n)[pi]; if (!p) return; const r = C.answer(q, p); chat.push({ r: 'u', x: q }, { r: 'a', x: r.text, c: r.cite }); render(); };
+  C.delegate(root, 'keydown', '[data-node],[data-mapdiv],[data-mappin]', (g, e) => { if (e.key === 'Enter' || e.key === ' ') g.dispatchEvent(new Event('click', { bubbles: true })); });
+  const ask = q => { q = (q || '').trim(); if (!q) return; const p = C.unionProjects(sel.n)[pi]; if (!p) return; const r = C.answer(q, p); chat.push({ r: 'u', x: q }, { r: 'a', x: r.text, c: r.cite, ex: r.examples }); render(); };
   C.delegate(root, 'click', '[data-ask]', b => ask(b.dataset.ask));
   C.delegate(root, 'click', '[data-act]', b => {
     const a = b.dataset.act;

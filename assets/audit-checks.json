@@ -1,0 +1,22 @@
+[
+ "All 12 routes reachable (fetch)",
+ "No external network requests (resource timing)",
+ "Content-Security-Policy meta on every route",
+ "localStorage works",
+ "Anomaly banner equals sum of flagged row excess",
+ "Disbursement never above budget",
+ "Deadline logic uses the current date",
+ "Seed dates are day offsets and the series ends yesterday",
+ "Bangla toggle covers all static headings",
+ "Lite mode removes SVG",
+ "Editing a benchmark rate recomputes badges",
+ "Weather API reachable or fallback active",
+ "Implemented/Planned tag coverage",
+ "Demo banner, skip link and lang on every route",
+ "Copilot chips return cited non-fallback answers",
+ "Copilot variant questions return cited non-fallback answers (English and Bangla)",
+ "Copilot penalty, tender, rules and law questions return the procurement passage",
+ "Copilot answers use Bangla text and digits in Bangla mode",
+ "Every route has at least 800 characters of pre-rendered text in main",
+ "No Latin-only visible labels in Bangla mode (acronyms and numbers allowed)"
+]

@@ -18,6 +18,8 @@ export const dig = s => (S.lang === 'bn' ? String(s).replace(/\d/g, d => BN[d]) 
 export const fmt = (n, dec = 0) => dig(Number(n).toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec }));
 export const bdt = n => { n = Number(n); const a = Math.abs(n); if (a >= 1e7) return '৳' + dig((n / 1e7).toFixed(2)) + t(' Cr', ' কোটি'); if (a >= 1e5) return '৳' + dig((n / 1e5).toFixed(2)) + t(' Lakh', ' লাখ'); return '৳' + fmt(n, 0); };
 export const esc = s => String(s).replace(/[&<>"'`]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;', '`': '&#96;' }[c]));
+const UNIT_BN = { kg: 'কেজি', bag: 'ব্যাগ', pc: 'পিস', cft: 'ঘনফুট', rft: 'রানিং ফুট', cum: 'ঘনমিটার', mm: 'মিমি' };
+export const unitT = u => (S.lang === 'bn' ? UNIT_BN[u] || u : u);
 export const nm = o => (S.lang === 'bn' ? o.bn || o.en || o.name : o.en || o.name);
 const langListeners = [];
 export const onLang = f => langListeners.push(f);
@@ -40,7 +42,19 @@ function syncTop() {
   $$('[data-set-lang]').forEach(b => b.classList.toggle('on', b.dataset.setLang === S.lang));
   const l = $('#lite-btn'); if (l) { l.setAttribute('aria-pressed', S.lite); l.textContent = t('Lite mode: ', 'লাইট মোড: ') + (S.lite ? t('on', 'চালু') : t('off', 'বন্ধ')); }
 }
+
+function fx() {
+  if (!$('.bgfx')) { const b = document.createElement('div'); b.className = 'bgfx'; b.setAttribute('aria-hidden', 'true'); b.innerHTML = '<i class="b1"></i><i class="b2"></i><i class="b3"></i><i class="grid"></i>'; document.body.prepend(b); }
+  let seen = false; try { seen = sessionStorage.getItem('pt-splash') === '1'; } catch (e) {}
+  if (seen || matchMedia('(prefers-reduced-motion: reduce)').matches || S.lite) return;
+  try { sessionStorage.setItem('pt-splash', '1'); } catch (e) {}
+  const sp = document.createElement('div'); sp.className = 'splash'; sp.setAttribute('role', 'dialog'); sp.setAttribute('aria-label', t('Opening animation', 'শুরুর অ্যানিমেশন'));
+  sp.innerHTML = `<div class="sp-in"><svg class="sp-logo" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="52" fill="none" stroke="currentColor" stroke-width="4" class="sp-ring"/><path d="M30 80 L50 52 L66 68 L92 34" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" class="sp-line"/><circle cx="92" cy="34" r="7" fill="currentColor" class="sp-dot"/></svg><h1>${t('Prokolpo Tracker', 'প্রকল্প ট্র্যাকার')}</h1><p>${t('Transparent Government · CivicSphere AI', 'স্বচ্ছ সরকার · সিভিকস্ফিয়ার এআই')}</p><div class="sp-bar" aria-hidden="true"><i></i></div><p class="sp-note">${t('Synthetic demo data. Not real government records.', 'কৃত্রিম ডেমো ডেটা। প্রকৃত সরকারি রেকর্ড নয়।')}</p><button class="btn" type="button">${t('Skip', 'এড়িয়ে যান')}</button></div>`;
+  document.body.appendChild(sp); const done = () => { sp.classList.add('out'); setTimeout(() => sp.remove(), 450); };
+  sp.querySelector('button').addEventListener('click', done); sp.addEventListener('keydown', e => { if (e.key === 'Escape') done(); }); setTimeout(done, 2100); sp.querySelector('button').focus({ preventScroll: true });
+}
 export function initShell() {
+  document.documentElement.classList.add('js'); fx();
   if (S.theme) document.documentElement.dataset.theme = S.theme;
   document.body.classList.toggle('lite', S.lite);
   delegate(document, 'click', '[data-set-lang]', b => setLang(b.dataset.setLang));
@@ -57,7 +71,13 @@ export async function loadAll() {
   const res = await Promise.all(names.map(n => fetch(new URL('data/' + n + '.json', BASE)).then(r => { if (!r.ok) throw new Error(n + ' ' + r.status); return r.json(); })));
   names.forEach((n, i) => D[n] = res[i]);
   D.baseRates = Object.fromEntries(Object.entries(D.benchmarks.materials).map(([k, v]) => [k, v.rate]));
-  D.projects.projects.forEach(p => p.materials.forEach(m => m.billed = Math.round(D.baseRates[m.k] * m.factor * 100) / 100)); // billed prices are fixed seed values
+  const iso = o => { const d = new Date(); d.setDate(d.getDate() + o); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+  D.iso = iso; // seed dates are stored as day offsets from today and resolved here with new Date(); the series always ends yesterday
+  D.projects.projects.forEach(p => {
+    p.start = iso(p.startO); p.deadline = iso(p.deadlineO);
+    p.daily.forEach(d => d.d = iso(d.o)); p.logs.forEach(l => l.d = iso(l.o));
+    p.materials.forEach(m => m.billed = Math.round(D.baseRates[m.k] * m.factor * 100) / 100); // billed prices are fixed seed values
+  });
   return D;
 }
 export const allProjects = () => D.projects.projects;
@@ -128,7 +148,7 @@ export const weatherNote = w => w && w.ok ? t('Open-Meteo forecast for Dhaka, ' 
 /* ---------- shared HTML renderers ---------- */
 export const pill = (c, x) => `<span class="pill ${c}">${esc(x)}</span>`;
 export function priceTableHTML(p, a = auditProject(p)) {
-  const rows = a.rows.map(r => { const m = D.benchmarks.materials[r.k]; return `<tr data-excess="${r.excess.toFixed(2)}" data-level="${r.level}"><td class="b">${esc(nm(m))}</td><td class="n">${fmt(r.qty)} ${esc(m.unit)}</td><td class="n">${fmt(r.billed, 2)}</td><td class="n">${fmt(r.bench, 2)}</td><td class="n">${fmt(r.total)}</td><td>${pill(r.level, lvlText(r))}</td></tr>`; }).join('');
+  const rows = a.rows.map(r => { const m = D.benchmarks.materials[r.k]; return `<tr data-excess="${r.excess.toFixed(2)}" data-level="${r.level}"><td class="b">${esc(nm(m))}</td><td class="n">${fmt(r.qty)} ${esc(unitT(m.unit))}</td><td class="n">${fmt(r.billed, 2)}</td><td class="n">${fmt(r.bench, 2)}</td><td class="n">${fmt(r.total)}</td><td>${pill(r.level, lvlText(r))}</td></tr>`; }).join('');
   return `<p><span class="pill ${a.excess > 0 ? 'warn' : 'ok'}" data-banner="${a.excess.toFixed(2)}">${a.excess > 0 ? t('Estimated excess over benchmark (items above 5% only): ', 'বেঞ্চমার্কের চেয়ে আনুমানিক অতিরিক্ত (শুধু ৫% এর উপরের আইটেম): ') + bdt(a.excess) : t('No items above 5% of benchmark', '৫% এর উপরে কোনো আইটেম নেই')}</span> <span class="sm mute">${esc(t(D.benchmarks.disclaimer_en, D.benchmarks.disclaimer_bn))}</span></p>
   <div class="tw"><table><thead><tr><th>${t('Material', 'উপকরণ')}</th><th class="n">${t('Quantity', 'পরিমাণ')}</th><th class="n">${t('Billed ৳/unit', 'বিলকৃত ৳/একক')}</th><th class="n">${t('Benchmark ৳/unit', 'বেঞ্চমার্ক ৳/একক')}</th><th class="n">${t('Total ৳', 'মোট ৳')}</th><th>${t('Status (advisory)', 'অবস্থা (পরামর্শমূলক)')}</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
@@ -141,43 +161,76 @@ export function graphNodes(p) {
   const others = allProjects().filter(q => q.contractor === p.contractor && q.id !== p.id);
   return { ag, c, un, sup, others, ministry: { en: ag.ministry_en, bn: ag.ministry_bn } };
 }
+export const agFull = k => { const a = D.agencies[k]; return t(a.full_en, a.full_bn); };
+export const agTxt = k => k + (S.lang === 'bn' ? ' (' + D.agencies[k].full_bn + ')' : '');
+export const agHTML = k => `<abbr title="${esc(t(D.agencies[k].full_en, D.agencies[k].full_bn))}">${esc(k)}</abbr>`;
+export const supName = s => { for (const m of Object.values(D.benchmarks.materials)) if (m.supplier === s) return nm({ en: s, bn: m.supplier_bn }); return s; };
 export function graphHTML(p, lite = S.lite) {
-  const g = graphNodes(p), L = [['Ministry', 'মন্ত্রণালয়', nm(g.ministry)], ['Agency', 'সংস্থা', p.agency], ['Project', 'প্রকল্প', nm(p)], ['Contractor', 'ঠিকাদার', nm(g.c)], ['Suppliers', 'সরবরাহকারী', g.sup.join(', ')], ['Union', 'ইউনিয়ন', nm(g.un)]];
+  const g = graphNodes(p), L = [['Ministry', 'মন্ত্রণালয়', nm(g.ministry)], ['Agency', 'সংস্থা', agTxt(p.agency)], ['Project', 'প্রকল্প', nm(p)], ['Contractor', 'ঠিকাদার', nm(g.c)], ['Suppliers', 'সরবরাহকারী', g.sup.map(supName).join(', ')], ['Union', 'ইউনিয়ন', nm(g.un)]];
   if (lite) return `<ul>${L.map(x => `<li><b>${esc(t(x[0], x[1]))}:</b> ${esc(x[2])}</li>`).join('')}</ul><p class="sm mute">${t('Diagram hidden in lite mode.', 'লাইট মোডে ডায়াগ্রাম লুকানো।')}</p>`;
-  const N = [{ id: 'ministry', x: 60, y: 120, l: 'Ministry' }, { id: 'agency', x: 170, y: 120, l: p.agency }, { id: 'project', x: 290, y: 120, l: 'Project' }, { id: 'contractor', x: 410, y: 120, l: 'Contractor' }, { id: 'union', x: 290, y: 30, l: 'Union' }];
-  g.sup.slice(0, 4).forEach((s, i) => N.push({ id: 'sup' + i, x: 530, y: 30 + i * 60, l: s.replace('Demo ', '').split(' ')[0], full: s }));
-  const E = [['ministry', 'agency'], ['agency', 'project'], ['project', 'contractor'], ['project', 'union'], ...N.filter(n => n.id.startsWith('sup')).map(n => ['contractor', n.id])];
-  const byId = Object.fromEntries(N.map(n => [n.id, n]));
-  return `<svg viewBox="0 0 600 210" width="100%" role="group" aria-label="${t('Knowledge graph', 'নলেজ গ্রাফ')}">${E.map(e => `<line x1="${byId[e[0]].x}" y1="${byId[e[0]].y}" x2="${byId[e[1]].x}" y2="${byId[e[1]].y}" stroke="var(--line)" stroke-width="2"/>`).join('')}${N.map(n => `<g class="nd" tabindex="0" role="button" data-node="${n.id}" aria-label="${esc(n.id)}"><circle cx="${n.x}" cy="${n.y}" r="26" fill="${n.id === 'contractor' && g.c.priorDelays >= 3 ? 'var(--crim)' : 'var(--em)'}"/><text x="${n.x}" y="${n.y + 4}" text-anchor="middle" font-size="10" fill="#fff">${esc(n.l.slice(0, 10))}</text></g>`).join('')}</svg>`;
+  // Large layout: 5 columns (Ministry > Agency > Project > Contractor > Suppliers), Union above Project. Labels sit in boxes below/next to nodes, 15 user units ≈ 12px+ at card width.
+  const sup = g.sup.slice(0, 4), wide = !(window.matchMedia && matchMedia('(max-width:760px)').matches);
+  const PITCH = wide ? 130 : 150, W = wide ? 1040 : 380, H = wide ? Math.max(340, 50 + (sup.length - 1) * PITCH + 140) : 560 + (sup.length - 1) * PITCH, cy = wide ? H / 2 : 0;
+  const pos = wide ? { ministry: [90, cy], agency: [290, cy], project: [490, cy], contractor: [690, cy], union: [490, 50] } : { ministry: [95, 50], agency: [95, 200], project: [95, 350], contractor: [95, 500], union: [285, 350] };
+  const N = [
+    { id: 'ministry', k: t('Ministry', 'মন্ত্রণালয়'), l: nm(g.ministry).replace(/\s*\((demo label|ডেমো লেবেল)\)/, '') },
+    { id: 'agency', k: t('Agency', 'সংস্থা'), l: S.lang === 'bn' ? D.agencies[p.agency].full_bn : p.agency },
+    { id: 'project', k: t('Project', 'প্রকল্প'), l: nm(p) },
+    { id: 'contractor', k: t('Contractor', 'ঠিকাদার'), l: nm(g.c) },
+    { id: 'union', k: t('Union', 'ইউনিয়ন'), l: nm(g.un) }].map(n => ({ ...n, x: pos[n.id][0], y: pos[n.id][1] }));
+  sup.forEach((s, i) => N.push({ id: 'sup' + i, x: wide ? 900 : 285, y: wide ? 50 + i * PITCH : 500 + i * PITCH, k: t('Supplier', 'সরবরাহকারী'), l: supName(s) }));
+  const E = [['ministry', 'agency'], ['agency', 'project'], ['project', 'contractor'], ['project', 'union'], ...sup.map((_, i) => ['contractor', 'sup' + i])];
+  const by = Object.fromEntries(N.map(n => [n.id, n])), wrap = (s, n) => { const w = String(s).split(' '), out = []; let c = ''; w.forEach(x => { if ((c + ' ' + x).trim().length > n) { out.push(c); c = x; } else c = (c + ' ' + x).trim(); }); out.push(c); return out.slice(0, 3); };
+  const col = n => n.id === 'contractor' && g.c.priorDelays >= 3 ? 'var(--crim)' : n.id.startsWith('sup') ? 'var(--info, #2f6fa8)' : 'var(--em)';
+  return `<svg class="kg" viewBox="0 0 ${W} ${H}" width="100%" role="group" aria-label="${t('Knowledge graph: Ministry, Agency, Project, Contractor, Suppliers, Union', 'নলেজ গ্রাফ: মন্ত্রণালয়, সংস্থা, প্রকল্প, ঠিকাদার, সরবরাহকারী, ইউনিয়ন')}">${E.map(e => `<line x1="${by[e[0]].x}" y1="${by[e[0]].y}" x2="${by[e[1]].x}" y2="${by[e[1]].y}" stroke="var(--mute)" stroke-width="3"/>`).join('')}${N.map(n => { const lines = wrap(n.l, wide ? 18 : 13); return `<g class="nd" tabindex="0" role="button" data-node="${n.id}" aria-label="${esc(n.k + ': ' + n.l)}"><rect x="${n.x - 70}" y="${n.y - 36}" width="140" height="${72 + 18 * lines.length + 18}" fill="transparent"/><circle cx="${n.x}" cy="${n.y}" r="30" fill="${col(n)}" stroke="var(--bg)" stroke-width="3"/><text x="${n.x}" y="${n.y + 6}" text-anchor="middle" font-size="18" font-weight="700" fill="#fff" aria-hidden="true">${esc(n.k.slice(0, 1))}</text><text x="${n.x}" y="${n.y + 52}" text-anchor="middle" font-size="16" font-weight="700" fill="var(--ink)" class="kt">${esc(n.k)}</text>${lines.map((ln, i) => `<text x="${n.x}" y="${n.y + 72 + i * 18}" text-anchor="middle" font-size="15" fill="var(--ink)" class="kt">${esc(ln)}</text>`).join('')}</g>`; }).join('')}</svg>`;
 }
 export function nodeDetails(p, id) {
   const g = graphNodes(p);
   if (id === 'ministry') return t('Ministry (demo label): ', 'মন্ত্রণালয় (ডেমো লেবেল): ') + nm(g.ministry);
-  if (id === 'agency') return t('Implementing agency: ', 'বাস্তবায়নকারী সংস্থা: ') + p.agency;
+  if (id === 'agency') return t('Implementing agency: ', 'বাস্তবায়নকারী সংস্থা: ') + p.agency + ' — ' + agFull(p.agency);
   if (id === 'project') return nm(p) + ' · ' + p.id;
   if (id === 'union') return t('Union: ', 'ইউনিয়ন: ') + nm(g.un);
-  if (id === 'contractor') return nm(g.c) + ' · ' + t('track record (synthetic) ', 'ট্র্যাক রেকর্ড (কৃত্রিম) ') + fmt(g.c.score) + '/100 · ' + t('prior delays ', 'আগের বিলম্ব ') + fmt(g.c.priorDelays) + (g.others.length ? ' · ' + t('other projects in seed data: ', 'সিড ডেটায় অন্য প্রকল্প: ') + g.others.map(o => o.id).join(', ') : '');
-  const s = g.sup[+id.slice(3)]; return t('Supplier (fictional): ', 'সরবরাহকারী (কাল্পনিক): ') + s;
+  if (id === 'contractor') return nm(g.c) + ' · ' + t('track record (synthetic) ', 'ট্র্যাক রেকর্ড (কৃত্রিম) ') + fmt(g.c.score) + '/' + dig(100) + ' · ' + t('prior delays ', 'আগের বিলম্ব ') + fmt(g.c.priorDelays) + (g.others.length ? ' · ' + t('other projects in seed data: ', 'সিড ডেটায় অন্য প্রকল্প: ') + g.others.map(o => o.id).join(', ') : '');
+  const s = g.sup[+id.slice(3)]; return t('Supplier (fictional): ', 'সরবরাহকারী (কাল্পনিক): ') + supName(s);
 }
 
-/* ---------- retrieval copilot (rule-based) ---------- */
-const tok = s => s.toLowerCase().split(/[^a-z0-9ঀ-৿]+/).filter(w => w.length > 1);
-export function answer(q, p) {
-  const f = flags(); if (!f.copilot) return { text: t('Copilot is disabled in the demo admin settings.', 'কোপাইলট ডেমো অ্যাডমিন সেটিংসে বন্ধ আছে।'), cite: [] };
-  const qt = new Set(tok(q)); let best = null, bs = 0;
-  D.kb.passages.forEach(ps => { const sc = tok(ps.kw).filter(w => qt.has(w)).length; if (sc > bs) { bs = sc; best = ps; } });
-  const a = auditProject(p);
-  const wantPrice = [...qt].some(w => /^(price|prices|cost|costs|expensive|overpriced|material|materials|rate|rates|benchmark|above|দাম|মূল্য|উপকরণ|বেশি|বেঞ্চমার্কের|উপরে)$/.test(w));
-  const wantDelay = [...qt].some(w => /^(delay|late|deadline|progress|behind|বিলম্ব|দেরি|সময়সীমা|অগ্রগতি)$/.test(w));
-  if (wantPrice) {
+/* ---------- retrieval copilot (rule-based, transparent) ---------- */
+export const CHIPS = [['Which materials are above benchmark?', 'কোন উপকরণ বেঞ্চমার্কের উপরে?'], ['Is this project delayed?', 'প্রকল্পটি কি বিলম্বিত?'], ['What is the penalty for late work?', 'দেরিতে কাজ শেষ করলে জরিমানা কী?'], ["How is tomorrow's progress projected?", 'আগামীকালের অগ্রগতি কীভাবে প্রক্ষেপণ করা হয়?']];
+export const VARIANTS = ['is it delayed', 'why late', 'overpriced?', 'expensive materials', 'দাম বেশি কেন', 'প্রকল্প কি দেরি', 'how to report a problem'];
+// Normalise: NFC, lowercase, strip punctuation (keeps letters, Bangla vowel signs, digits). Tokens match intents by STEM/PREFIX (>= 4 chars; Bangla stems >= 3 code points; a few short exact words).
+export const norm = q => String(q).normalize('NFC').toLowerCase().replace(/[^\p{L}\p{M}\p{N}\s]+/gu, '').split(/\s+/).filter(Boolean);
+const INTENTS = [
+  ['proc', { pre: ['procur', 'tender', 'penalt', 'rules', 'legal', 'regulat', 'sanction', 'জরিমানা', 'দরপত্র', 'বিধি', 'আইন', 'শাস্তি', 'ক্রয়', 'ই-জিপি', 'ইজিপি'], exact: ['law', 'laws', 'rule', 'fine', 'fines', 'ppr', 'egp'] }],
+  ['report', { pre: ['report', 'complain', 'whistle', 'grievanc', 'রিপোর্ট', 'অভিযোগ', 'জানাব', 'জানান'], exact: [] }],
+  ['proj', { pre: ['projection', 'projected', 'projecting', 'forecast', 'predict', 'tomorrow', 'regress', 'প্রক্ষেপণ', 'পূর্বাভাস', 'আগামী'], exact: [] }],
+  ['price', { pre: ['price', 'pricing', 'priced', 'overpri', 'expens', 'costl', 'cost', 'rate', 'benchm', 'material', 'above', 'dearer', 'দাম', 'মূল্য', 'উপকরণ', 'বেঞ্চমার্ক', 'খরচ'], exact: [] }],
+  ['delay', { pre: ['delay', 'late', 'behind', 'deadline', 'overdue', 'progress', 'schedul', 'disburs', 'slow', 'দেরি', 'দেরী', 'বিলম্ব', 'সময়সীমা', 'অগ্রগতি', 'পিছিয়', 'ছাড়'], exact: [] }]
+];
+const hit = (tok, d) => d.exact.includes(tok) || d.pre.some(p => tok.startsWith(p) || (tok.length >= 4 && p.startsWith(tok) && tok.length >= p.length - 1));
+export function intentOf(q) { const toks = norm(q); for (const [id, d] of INTENTS) if (toks.some(x => hit(x, d))) return id; return null; }
+const kbp = id => D.kb.passages.find(x => x.id === id);
+const ILLUS = () => t('Illustrative, verify with official source.', 'উদাহরণমূলক, সরকারি সূত্রে যাচাই করুন।');
+export function answer(q, p, opts = {}) {
+  if (!opts.force && !flags().copilot) return { text: t('Copilot is disabled in the admin demo settings.', 'কোপাইলট অ্যাডমিন ডেমো সেটিংসে বন্ধ আছে।'), cite: [], intent: 'disabled' };
+  const intent = intentOf(q), a = auditProject(p), seed = t('Seed data: ', 'সিড ডেটা: ') + p.id, pas = id => (S.lang === 'bn' ? kbp(id).bn : kbp(id).en);
+  if (intent === 'proc') return { intent, text: pas('kb-proc'), cite: ['kb-proc'] };
+  if (intent === 'report') return { intent, text: pas('kb-report'), cite: ['kb-report'] };
+  if (intent === 'proj') {
+    if (!flags().projection && !opts.force) return { intent, text: pas('kb-proj') + '\n' + t('The projection feature is switched off in the admin demo.', 'প্রক্ষেপণ ফিচার অ্যাডমিন ডেমোতে বন্ধ।'), cite: ['kb-proj'] };
+    const pr = project(p, wcache); return { intent, text: pas('kb-proj') + '\n' + t('For this project: ', 'এই প্রকল্পের জন্য: ') + fmt(pr.last, 1) + '% → ' + fmt(pr.tomorrow, 1) + '% (' + t('slope ', 'ঢাল ') + fmt(pr.slope, 3) + ', R² ' + fmt(pr.r2, 3) + ').', cite: ['kb-proj', seed] };
+  }
+  if (intent === 'price') {
     const fl = a.rows.filter(r => r.level !== 'ok');
-    return { text: (fl.length ? t('Items above benchmark in this project:\n', 'এই প্রকল্পে বেঞ্চমার্কের উপরের আইটেম:\n') + fl.map(r => '• ' + nm(D.benchmarks.materials[r.k]) + ': ' + lvlText(r)).join('\n') + '\n' + t('Estimated excess: ', 'আনুমানিক অতিরিক্ত: ') + bdt(a.excess) : t('No item is more than 5% above its benchmark in this project.', 'এই প্রকল্পে কোনো আইটেম বেঞ্চমার্কের ৫% এর বেশি উপরে নয়।')) + '\n' + t('Benchmarks ignore transport and bulk discounts. A person must decide.', 'বেঞ্চমার্কে পরিবহন ও বাল্ক ছাড় নেই। সিদ্ধান্ত মানুষের।'), cite: [t('Seed data: ', 'সিড ডেটা: ') + p.id, 'kb-flags'] };
+    return { intent, text: (fl.length ? t('Items above benchmark in this project:\n', 'এই প্রকল্পে বেঞ্চমার্কের উপরের আইটেম:\n') + fl.map(r => '• ' + nm(D.benchmarks.materials[r.k]) + ': ' + lvlText(r)).join('\n') + '\n' + t('Estimated excess (items above 5% only): ', 'আনুমানিক অতিরিক্ত (শুধু ৫% এর উপরের আইটেম): ') + bdt(a.excess) : t('No item is more than 5% above its benchmark in this project.', 'এই প্রকল্পে কোনো আইটেম বেঞ্চমার্কের ৫% এর বেশি উপরে নয়।')) + '\n' + t('Benchmarks ignore transport and bulk discounts, so this is advisory; a person decides. ', 'বেঞ্চমার্কে পরিবহন ও বাল্ক ছাড় ধরা হয়নি, তাই এটি পরামর্শমূলক; সিদ্ধান্ত মানুষের। ') + ILLUS(), cite: [seed, 'kb-rates', 'kb-flags'] };
   }
-  if (wantDelay) {
-    return { text: t('Progress ', 'অগ্রগতি ') + fmt(a.prog, 1) + '%, ' + t('disbursed ', 'ছাড় ') + fmt(a.disbPct, 1) + '%, ' + t('deadline ', 'সময়সীমা ') + dig(p.deadline) + (a.ds.past ? t(' (past by ' + a.ds.daysPast + ' days).', ' (' + fmt(a.ds.daysPast) + ' দিন পেরিয়েছে)।') : t(' (' + a.ds.days + ' days left).', ' (' + fmt(a.ds.days) + ' দিন বাকি)।')) + (a.red.length ? '\n' + a.red.map(redText).join('; ') : ''), cite: [t('Seed data: ', 'সিড ডেটা: ') + p.id, 'kb-delay'] };
+  if (intent === 'delay') {
+    return { intent, text: t('Progress ', 'অগ্রগতি ') + fmt(a.prog, 1) + '%, ' + t('disbursed ', 'ছাড় ') + fmt(a.disbPct, 1) + '%, ' + t('deadline ', 'সময়সীমা ') + dig(p.deadline) + (a.ds.past ? t(' (past by ' + a.ds.daysPast + ' days).', ' (' + fmt(a.ds.daysPast) + ' দিন পেরিয়েছে)।') : t(' (' + a.ds.days + ' days left).', ' (' + fmt(a.ds.days) + ' দিন বাকি)।')) + (a.red.length ? '\n' + a.red.map(redText).join('; ') : '') + '\n' + t('Advisory only; review recommended where flagged.', 'শুধু পরামর্শমূলক; ফ্ল্যাগ থাকলে পর্যালোচনা সুপারিশকৃত।'), cite: [seed, 'kb-delay'] };
   }
-  if (best) return { text: (S.lang === 'bn' ? best.bn : best.en), cite: [best.id] };
-  return { text: t('No matching passage in the local knowledge base. Try: prices, delay, projection, procurement, reporting.', 'স্থানীয় নলেজ বেসে মিল পাওয়া যায়নি। চেষ্টা করুন: দাম, বিলম্ব, প্রক্ষেপণ, ক্রয়, অভিযোগ।'), cite: [] };
+  // 6. best-scoring passage by stem overlap
+  const qt = norm(q); let best = null, bs = 0;
+  D.kb.passages.forEach(ps => { const sc = norm(ps.kw).filter(w => w.length >= 4 && qt.some(x => x.length >= 4 && (x.startsWith(w) || w.startsWith(x)))).length; if (sc > bs) { bs = sc; best = ps; } });
+  if (best) return { intent: 'best', text: S.lang === 'bn' ? best.bn : best.en, cite: [best.id] };
+  return { intent: 'fallback', fallback: true, text: t('I could not match that to a passage in the local knowledge base. Try one of these questions:', 'স্থানীয় নলেজ বেসে এর সাথে মিল পাইনি। এই প্রশ্নগুলোর একটি চেষ্টা করুন:'), cite: [], examples: CHIPS.map(c => t(c[0], c[1])) };
 }
 
 /* ---------- voice (Web Speech API) ---------- */

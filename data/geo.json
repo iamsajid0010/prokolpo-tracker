@@ -21,13 +21,17 @@
          "id": "ashulia",
          "en": "Ashulia",
          "bn": "আশুলিয়া",
-         "hasData": true
+         "hasData": true,
+         "lat": 23.8897,
+         "lng": 90.3199
         },
         {
          "id": "birulia",
          "en": "Birulia",
          "bn": "বিরুলিয়া",
-         "hasData": true
+         "hasData": true,
+         "lat": 23.8847,
+         "lng": 90.3548
         },
         {
          "id": "pathalia",
@@ -105,7 +109,9 @@
          "id": "barabkunda",
          "en": "Barabkunda",
          "bn": "বারবকুণ্ড",
-         "hasData": true
+         "hasData": true,
+         "lat": 22.629,
+         "lng": 91.668
         },
         {
          "id": "sonaichhari",
@@ -499,5 +505,7 @@
     }
    ]
   }
- ]
+ ],
+ "coord_note_en": "Union coordinates are approximate, for orientation only; verify with official LGD/survey data.",
+ "coord_note_bn": "ইউনিয়নের স্থানাঙ্ক আনুমানিক, শুধু দিকনির্দেশনার জন্য; সরকারি এলজিডি/জরিপ ডেটায় যাচাই করুন।"
 }

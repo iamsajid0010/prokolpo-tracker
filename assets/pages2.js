@@ -28,7 +28,7 @@ async function main() {
     await C.loadAll();
     const draw = () => {
       const p = C.allProjects()[0], a = C.auditProject(p), r = a.rows.find(x => x.level !== 'ok') || a.rows[0], m = D.benchmarks.materials[r.k];
-      $('#lineage').innerHTML = `<ol><li>${t('Seed file', 'সিড ফাইল')}: <code>data/projects.json</code> → ${esc(p.id)}, ${esc(r.k)}: ${t('quantity', 'পরিমাণ')} ${fmt(r.qty)} ${esc(m.unit)}, ${t('billed', 'বিল')} ৳${fmt(r.billed, 2)}</li><li>${t('Benchmark file', 'বেঞ্চমার্ক ফাইল')}: <code>data/benchmarks.json</code> → ৳${fmt(r.bench, 2)}</li><li>${t('Rule', 'রুল')}: (${fmt(r.billed, 2)} − ${fmt(r.bench, 2)}) ÷ ${fmt(r.bench, 2)} = ${fmt(r.pct, 1)}%</li><li>${t('Badge', 'ব্যাজ')}: ${pill(r.level, C.lvlText(r))} (${t('amber above 5%, red above 15%', '৫% এর উপরে অ্যাম্বার, ১৫% এর উপরে লাল')})</li></ol>`;
+      $('#lineage').innerHTML = `<ol><li>${t('Seed file', 'সিড ফাইল')}: <code>data/projects.json</code> → ${esc(p.id)}, ${esc(r.k)}: ${t('quantity', 'পরিমাণ')} ${fmt(r.qty)} ${esc(C.unitT(m.unit))}, ${t('billed', 'বিল')} ৳${fmt(r.billed, 2)}</li><li>${t('Benchmark file', 'বেঞ্চমার্ক ফাইল')}: <code>data/benchmarks.json</code> → ৳${fmt(r.bench, 2)}</li><li>${t('Rule', 'রুল')}: (${fmt(r.billed, 2)} − ${fmt(r.bench, 2)}) ÷ ${fmt(r.bench, 2)} = ${fmt(r.pct, 1)}%</li><li>${t('Badge', 'ব্যাজ')}: ${pill(r.level, C.lvlText(r))} (${t('amber above 5%, red above 15%', '৫% এর উপরে অ্যাম্বার, ১৫% এর উপরে লাল')})</li></ol>`;
     };
     draw(); C.onLang(draw);
     $$('[data-dl]').forEach(b => b.addEventListener('click', async () => { const r = await fetch(new URL('data/' + b.dataset.dl + '.json', C.BASE)); C.download(b.dataset.dl + '.json', await r.text()); }));

@@ -2,26 +2,36 @@
  "LGED": {
   "bn": "এলজিইডি",
   "ministry_en": "Ministry of Local Government (demo label)",
-  "ministry_bn": "স্থানীয় সরকার মন্ত্রণালয় (ডেমো লেবেল)"
+  "ministry_bn": "স্থানীয় সরকার মন্ত্রণালয় (ডেমো লেবেল)",
+  "full_en": "Local Government Engineering Department",
+  "full_bn": "স্থানীয় সরকার প্রকৌশল অধিদপ্তর"
  },
  "RHD": {
   "bn": "সওজ",
   "ministry_en": "Ministry of Roads and Bridges (demo label)",
-  "ministry_bn": "সড়ক ও সেতু মন্ত্রণালয় (ডেমো লেবেল)"
+  "ministry_bn": "সড়ক ও সেতু মন্ত্রণালয় (ডেমো লেবেল)",
+  "full_en": "Roads and Highways Department",
+  "full_bn": "সড়ক ও জনপথ অধিদপ্তর"
  },
  "DPHE": {
   "bn": "ডিপিএইচই",
   "ministry_en": "Ministry of Local Government (demo label)",
-  "ministry_bn": "স্থানীয় সরকার মন্ত্রণালয় (ডেমো লেবেল)"
+  "ministry_bn": "স্থানীয় সরকার মন্ত্রণালয় (ডেমো লেবেল)",
+  "full_en": "Department of Public Health Engineering",
+  "full_bn": "জনস্বাস্থ্য প্রকৌশল অধিদপ্তর"
  },
  "PWD": {
   "bn": "গণপূর্ত",
   "ministry_en": "Ministry of Housing and Public Works (demo label)",
-  "ministry_bn": "গৃহায়ন ও গণপূর্ত মন্ত্রণালয় (ডেমো লেবেল)"
+  "ministry_bn": "গৃহায়ন ও গণপূর্ত মন্ত্রণালয় (ডেমো লেবেল)",
+  "full_en": "Public Works Department",
+  "full_bn": "গণপূর্ত অধিদপ্তর"
  },
  "BWDB": {
   "bn": "পাউবো",
   "ministry_en": "Ministry of Water Resources (demo label)",
-  "ministry_bn": "পানি সম্পদ মন্ত্রণালয় (ডেমো লেবেল)"
+  "ministry_bn": "পানি সম্পদ মন্ত্রণালয় (ডেমো লেবেল)",
+  "full_en": "Bangladesh Water Development Board",
+  "full_bn": "বাংলাদেশ পানি উন্নয়ন বোর্ড"
  }
 }

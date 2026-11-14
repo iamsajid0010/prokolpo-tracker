@@ -1,0 +1,33 @@
+:root{--bg:#07130f;--ink:#e9f4ee;--mute:#a9c0b5;--em:#4fdba2;--line:#1f3a30;--panel:#0d1f18}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#07130f;color:#e9f4ee;font-family:system-ui,-apple-system,"Segoe UI","Noto Sans Bengali","Kalpurush","Nirmala UI",Roboto,sans-serif;line-height:1.55}
+a{color:#7fe3b8}:focus-visible{outline:3px solid #4fdba2;outline-offset:3px}
+.skip{position:absolute;left:-999px;top:0;background:#4fdba2;color:#04120b;padding:8px 12px;z-index:99}.skip:focus{left:8px;top:8px}
+.demo-banner{position:relative;z-index:3;background:#3a2b0d;color:#f2b84f;border-bottom:2px solid #f2b84f;padding:6px 16px;font-weight:600;text-align:center;font-size:.9rem}
+.stage{position:relative;overflow:hidden;min-height:calc(100vh - 36px);display:grid;place-items:center;padding:24px 16px;isolation:isolate}
+.bg{position:absolute;inset:0;z-index:-1;background:radial-gradient(60% 50% at 20% 20%,#0f4a36 0,transparent 70%),radial-gradient(50% 45% at 85% 75%,#12384f 0,transparent 70%),#07130f}
+.bg::after{content:"";position:absolute;inset:-10%;background-image:linear-gradient(rgba(79,219,162,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(79,219,162,.07) 1px,transparent 1px);background-size:48px 48px;animation:grid 40s linear infinite}
+@keyframes grid{to{transform:translate(48px,48px)}}
+.net{position:absolute;inset:0;width:100%;height:100%;z-index:-1;opacity:.9}
+.net line{stroke:#4fdba2;stroke-opacity:.28;stroke-width:1.2;stroke-dasharray:400;stroke-dashoffset:400;animation:draw 2.4s ease forwards}
+.net circle{fill:#4fdba2;opacity:.8;animation:pulse 3.2s ease-in-out infinite}
+@keyframes draw{to{stroke-dashoffset:0}}@keyframes pulse{0%,100%{r:3;opacity:.5}50%{r:6;opacity:1}}
+.card{width:min(760px,100%);text-align:center;background:rgba(13,31,24,.72);border:1px solid #1f3a30;border-radius:18px;padding:34px 26px;backdrop-filter:blur(10px);box-shadow:0 30px 80px -30px #000}
+.logo{width:92px;height:92px;margin:0 auto 10px;display:block}
+.logo path{stroke-dasharray:140;stroke-dashoffset:140;animation:draw 1.6s .2s ease forwards}.logo .tick{animation-delay:1.2s}
+.logo circle{fill:#0a6b4a;stroke:#4fdba2;stroke-width:2;transform-origin:center;animation:pop .7s ease both}@keyframes pop{from{transform:scale(.4);opacity:0}to{transform:none;opacity:1}}
+h1{font-size:clamp(2rem,6vw,3.3rem);letter-spacing:-.02em;margin:.2em 0 .1em;line-height:1.15}
+h1 span.l{display:inline-block;opacity:0;transform:translateY(14px);animation:rise .6s ease forwards}
+@keyframes rise{to{opacity:1;transform:none}}
+.sub{color:#a9c0b5;font-size:1.1rem;margin:.2em auto 1em;max-width:54ch;opacity:0;animation:rise .8s 1.3s ease forwards}
+.stats{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:16px 0;opacity:0;animation:rise .8s 1.7s ease forwards}
+.stat{min-width:120px;background:#0a1813;border:1px solid #1f3a30;border-radius:12px;padding:10px 14px}.stat b{display:block;font-size:1.9rem;color:#4fdba2;font-variant-numeric:tabular-nums}.stat span{font-size:.82rem;color:#a9c0b5}
+.badge{display:inline-block;background:#3a2b0d;color:#f2b84f;border:1px solid #f2b84f;border-radius:99px;padding:3px 12px;font-size:.82rem;font-weight:600;margin-bottom:8px}
+.cta{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:12px;opacity:0;animation:rise .8s 2.1s ease forwards}
+.btn{display:inline-block;border:1px solid #2c5646;background:#0d1f18;color:#e9f4ee;padding:10px 18px;border-radius:10px;font:inherit;font-weight:600;text-decoration:none;cursor:pointer}
+.btn:hover{border-color:#4fdba2}.btn.pri{background:#4fdba2;border-color:#4fdba2;color:#04120b}
+.prog{height:4px;background:#1f3a30;border-radius:9px;overflow:hidden;margin:18px auto 0;max-width:340px}.prog i{display:block;height:100%;width:0;background:#4fdba2}
+.prog.run i{animation:fill 7s linear forwards}@keyframes fill{to{width:100%}}
+.lang{position:absolute;right:14px;top:50px;display:flex;gap:6px;z-index:2}.lang .btn{padding:5px 11px}.lang .btn[aria-pressed=true]{background:#4fdba2;color:#04120b;border-color:#4fdba2}
+.info{max-width:960px;margin:0 auto;padding:30px 16px 60px;color:#cfe0d6}.info h2{color:#fff;margin-top:1.4em}.info ul{columns:2;column-gap:28px;padding-left:18px}@media(max-width:600px){.info ul{columns:1}}
+.info .cardm{background:#0d1f18;border:1px solid #1f3a30;border-radius:12px;padding:14px 16px;margin:10px 0}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}h1 span.l,.sub,.stats,.cta{opacity:1;transform:none}.net line{stroke-dashoffset:0}.logo path{stroke-dashoffset:0}.prog{display:none}}

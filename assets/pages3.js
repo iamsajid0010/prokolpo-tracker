@@ -79,6 +79,46 @@ async function audit() {
     add('Implemented/Planned tag coverage', feats >= 20 && !untagged, feats + ' feature items across routes; untagged: ' + untagged);
     const ban = reach.filter(r => /Synthetic demo data/.test(pages[r]) && /class="skip"/.test(pages[r]) && /<html lang=/.test(pages[r]));
     add('Demo banner, skip link and lang on every route', ban.length === reach.length, ban.length + '/' + reach.length);
+
+    // ---- seed dates are offsets; series ends yesterday
+    const yd = C.D.iso(-1), bad2 = C.allProjects().filter(p => p.daily.length !== 14 || p.daily[p.daily.length - 1].d !== yd || !p.daily.every(d => /^\d{4}-\d\d-\d\d$/.test(d.d)));
+    add('Seed dates are day offsets and the series ends yesterday', !bad2.length && C.allProjects().every(p => p.daily.every(d => typeof d.o === 'number' && d.o < 0)), C.allProjects().length + ' projects; each has 14 daily records from offset -14 to -1; last record dated ' + yd + (bad2.length ? '; mismatch: ' + bad2.map(p => p.id).join(', ') : ''));
+    // ---- copilot
+    const wasLang = C.S.lang, p1 = C.allProjects()[0], isCited = r => r && !r.fallback && r.cite && r.cite.length > 0 && r.text.length > 20;
+    C.S.lang = 'en';
+    const chipsBad = C.CHIPS.filter(c => !isCited(C.answer(c[0], p1, { force: true })));
+    add('Copilot chips return cited non-fallback answers', chipsBad.length === 0 && C.CHIPS.length === 4, C.CHIPS.length + ' chips; failures: ' + (chipsBad.map(c => c[0]).join(' | ') || 'none') + '; intents: ' + C.CHIPS.map(c => C.answer(c[0], p1, { force: true }).intent).join(', '));
+    const bnQs = C.CHIPS.map(c => c[1]), varBad = [];
+    C.VARIANTS.forEach(q => { C.S.lang = /[ঀ-৿]/.test(q) ? 'bn' : 'en'; if (!isCited(C.answer(q, p1, { force: true }))) varBad.push(q); });
+    C.S.lang = 'bn'; bnQs.forEach(q => { if (!isCited(C.answer(q, p1, { force: true }))) varBad.push(q); });
+    add('Copilot variant questions return cited non-fallback answers (English and Bangla)', varBad.length === 0, (C.VARIANTS.length + bnQs.length) + ' questions; failures: ' + (varBad.join(' | ') || 'none'));
+    C.S.lang = 'en'; const procQs = ['What is the penalty for late work?', 'tender rules', 'is there a law about delays', 'penalty', 'procurement law for late work'], procBad = procQs.filter(q => { const r = C.answer(q, p1, { force: true }); return r.intent !== 'proc' || !r.cite.includes('kb-proc') || !/Illustrative, verify with official source/.test(r.text); });
+    add('Copilot penalty, tender, rules and law questions return the procurement passage', procBad.length === 0, procQs.length + ' questions; failures: ' + (procBad.join(' | ') || 'none'));
+    C.S.lang = 'bn'; const rb = C.answer(C.CHIPS[1][1], p1, { force: true }), rp = C.answer(C.CHIPS[0][1], p1, { force: true });
+    add('Copilot answers use Bangla text and digits in Bangla mode', /[ঀ-৿]/.test(rb.text) && /[০-৯]/.test(rb.text) && !/\d/.test(rb.text) && !/\d/.test(rp.text), 'delay answer: ' + rb.text.split('\n')[0].slice(0, 70));
+    C.S.lang = wasLang;
+    // ---- pre-rendered text per route (fetch HTML, strip scripts, read main)
+    const lens = {}; reach.forEach(r => { const doc = new DOMParser().parseFromString(pages[r], 'text/html'); doc.querySelectorAll('script,style').forEach(x => x.remove()); lens[r] = (doc.querySelector('main')?.textContent || '').replace(/\s+/g, ' ').trim().length; });
+    const short = reach.filter(r => lens[r] < 800);
+    add('Every route has at least 800 characters of pre-rendered text in main', !short.length && reach.length === routes.length, 'min ' + Math.min(...Object.values(lens)) + ' chars' + (short.length ? '; short: ' + short.map(r => r + '=' + lens[r]).join(', ') : '') + ' (main text without scripts, as served)');
+    // ---- Bangla mode: no Latin-only labels (iframe scan of interactive routes)
+    const ALLOW = new Set(['LGED', 'RHD', 'DPHE', 'PWD', 'BWDB', 'LGD', 'EN', 'JSON', 'CSV', 'API', 'UUID', 'ID', 'PDF', 'SSO', '2FA', 'KB', 'IMED', 'e-GP', 'OK', 'TMT', 'kg', 'km', 'mm', 'cum', 'sqm', 'pcs', 'nos', 'MT', 'kW', 'localStorage', 'crypto.randomUUID', 'Open-Meteo', 'Web', 'Speech', 'R²', 'LLM', 'AES', 'CDN', 'CSP', 'HTML', 'URL', 'W', 'mm.']);
+    const latinBad = []; const prevLang = C.store.get('lang', 'en'); C.store.set('lang', 'bn');
+    for (const r of ['app', 'demo-user', 'demo-admin', 'admin']) {
+      const fr = document.createElement('iframe'); fr.style.cssText = 'position:absolute;left:-9999px;width:1100px;height:900px'; fr.src = new URL(r + '/', C.BASE).href; document.body.appendChild(fr);
+      await new Promise(ok => { fr.onload = ok; setTimeout(ok, 6000); }); await new Promise(ok => setTimeout(ok, 700));
+      const d = fr.contentDocument; if (!d) { latinBad.push(r + ': iframe not readable'); fr.remove(); continue; }
+      const w = d.createTreeWalker(d.body, NodeFilter.SHOW_TEXT);
+      while (w.nextNode()) {
+        const n = w.currentNode, el = n.parentElement; if (!el || el.closest('script,style,noscript,code,pre,#toast,.rail small,option[hidden]')) continue;
+        const txt = n.textContent.replace(/https?:\S+|\S*\/\S*|\S+\.json/g, ' '); const words = txt.match(/[A-Za-z][A-Za-z'’.-]*/g) || [];
+        const left = words.filter(x => !ALLOW.has(x) && !/^[A-Z0-9]{2,6}-?$/.test(x) && x.length > 1);
+        if (left.length) latinBad.push(r + ': "' + n.textContent.trim().slice(0, 50) + '"');
+      }
+      fr.remove();
+    }
+    C.store.set('lang', prevLang);
+    add('No Latin-only visible labels in Bangla mode (acronyms and numbers allowed)', latinBad.length === 0, 'scanned /app, /demo-user, /demo-admin, /admin in Bangla; ' + (latinBad.length ? latinBad.length + ' found, e.g. ' + latinBad.slice(0, 80).join(' | ') : 'none found'));
     res = { at: new Date().toISOString(), checks: out, score: out.filter(c => c.pass).length + '/' + out.length };
   }
   C.delegate(root, 'click', '[data-a]', async b => {
