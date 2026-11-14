@@ -39,7 +39,7 @@ function pitchdeck() {
 }
 
 /* ----- real in-browser audit ----- */
-const RISKS = [['Seed data is synthetic; findings say nothing about real projects.', 'সিড ডেটা কৃত্রিম; ফলাফল প্রকৃত প্রকল্প সম্পর্কে কিছু বলে না।'], ['Benchmark rates are illustrative and ignore transport and bulk discounts.', 'বেঞ্চমার্ক রেট উদাহরণমূলক; পরিবহন ও বাল্ক ছাড় ধরা হয়নি।'], ['Client-side checks can be modified by a user; this is not an independent audit or certification.', 'ক্লায়েন্ট-সাইড চেক ব্যবহারকারী বদলাতে পারে; এটি স্বাধীন অডিট বা সনদ নয়।'], ['Reports and votes are not shared between users.', 'রিপোর্ট ও ভোট ব্যবহারকারীদের মধ্যে ভাগ হয় না।'], ['Weather projection depends on a third-party API when online.', 'অনলাইনে আবহাওয়া প্রক্ষেপণ তৃতীয় পক্ষের এপিআইয়ের উপর নির্ভরশীল।']];
+const RISKS = [['Seed data is synthetic; findings say nothing about real projects.', 'সিড ডেটা কৃত্রিম; ফলাফল প্রকৃত প্রকল্প সম্পর্কে কিছু বলে না।'], ['Benchmark rates are illustrative and ignore transport and bulk discounts.', 'বেঞ্চমার্ক রেট উদাহরণমূলক; পরিবহন ও বাল্ক ছাড় ধরা হয়নি।'], ['Client-side checks can be modified by a user; this is not an independent audit or certification. The Bangla label scan covers 10 routes and a heuristic word list; it cannot prove every string is translated.', 'ক্লায়েন্ট-সাইড চেক ব্যবহারকারী বদলাতে পারে; এটি স্বাধীন অডিট বা সনদ নয়।'], ['Reports and votes are not shared between users.', 'রিপোর্ট ও ভোট ব্যবহারকারীদের মধ্যে ভাগ হয় না।'], ['Weather projection depends on a third-party API when online.', 'অনলাইনে আবহাওয়া প্রক্ষেপণ তৃতীয় পক্ষের এপিআইয়ের উপর নির্ভরশীল।']];
 async function audit() {
   await C.loadAll(); let res = null, running = false;
   const draw = () => {
@@ -76,7 +76,8 @@ async function audit() {
     add('Editing a benchmark rate recomputes badges', b1 !== b0 || b2 !== b0 || b1 !== b2, k + ': excess ' + Math.round(b0) + ' → ' + Math.round(b1) + ' / ' + Math.round(b2) + ' (rate restored)');
     const w = await C.getWeather(); add('Weather API reachable or fallback active', w.ok || /Offline/.test(C.weatherNote(w)), w.ok ? 'Open-Meteo reachable: ' + w.mm + ' mm forecast for ' + w.date : 'Offline: fallback note shown, projection runs without weather');
     let feats = 0, untagged = 0; reach.forEach(r => { const doc = new DOMParser().parseFromString(pages[r], 'text/html'); doc.querySelectorAll('.feat').forEach(f => { feats++; if (!f.querySelector('.tag.implemented,.tag.planned')) untagged++; }); });
-    add('Implemented/Planned tag coverage', feats >= 20 && !untagged, feats + ' feature items across routes; untagged: ' + untagged);
+    const noTag = reach.filter(r => !/class="tag (implemented|planned)"/.test(pages[r]) && r !== 'prompt');
+    add('Implemented/Planned tag coverage', feats >= 40 && !untagged && !noTag.length, feats + ' feature items across routes; untagged items: ' + untagged + '; routes with no tag: ' + (noTag.join(', ') || 'none'));
     const ban = reach.filter(r => /Synthetic demo data/.test(pages[r]) && /class="skip"/.test(pages[r]) && /<html lang=/.test(pages[r]));
     add('Demo banner, skip link and lang on every route', ban.length === reach.length, ban.length + '/' + reach.length);
 
@@ -102,9 +103,9 @@ async function audit() {
     const short = reach.filter(r => lens[r] < 800);
     add('Every route has at least 800 characters of pre-rendered text in main', !short.length && reach.length === routes.length, 'min ' + Math.min(...Object.values(lens)) + ' chars' + (short.length ? '; short: ' + short.map(r => r + '=' + lens[r]).join(', ') : '') + ' (main text without scripts, as served)');
     // ---- Bangla mode: no Latin-only labels (iframe scan of interactive routes)
-    const ALLOW = new Set(['LGED', 'RHD', 'DPHE', 'PWD', 'BWDB', 'LGD', 'EN', 'JSON', 'CSV', 'API', 'UUID', 'ID', 'PDF', 'SSO', '2FA', 'KB', 'IMED', 'e-GP', 'OK', 'TMT', 'kg', 'km', 'mm', 'cum', 'sqm', 'pcs', 'nos', 'MT', 'kW', 'localStorage', 'crypto.randomUUID', 'Open-Meteo', 'Web', 'Speech', 'R²', 'LLM', 'AES', 'CDN', 'CSP', 'HTML', 'URL', 'W', 'mm.']);
+    const ALLOW = new Set(['LGED', 'RHD', 'DPHE', 'PWD', 'BWDB', 'LGD', 'EN', 'JSON', 'CSV', 'API', 'UUID', 'ID', 'PDF', 'SSO', '2FA', 'KB', 'IMED', 'e-GP', 'OK', 'TMT', 'kg', 'km', 'mm', 'cum', 'sqm', 'pcs', 'nos', 'MT', 'kW', 'localStorage', 'crypto.randomUUID', 'Open-Meteo', 'Web', 'Speech', 'R²', 'LLM', 'AES', 'CDN', 'CSP', 'HTML', 'URL', 'W', 'mm.', 'api.open-meteo.com', 'new', 'Date', 'bn-BD', 'en-US', 'GitHub', 'Pages', 'WebSpeech', 'JavaScript']);
     const latinBad = []; const prevLang = C.store.get('lang', 'en'); C.store.set('lang', 'bn');
-    for (const r of ['app', 'demo-user', 'demo-admin', 'admin']) {
+    for (const r of ['app', 'demo-user', 'demo-admin', 'admin', 'data', 'security', 'architecture', 'presentation', 'pitchdeck', 'docs']) {
       const fr = document.createElement('iframe'); fr.style.cssText = 'position:absolute;left:-9999px;width:1100px;height:900px'; fr.src = new URL(r + '/', C.BASE).href; document.body.appendChild(fr);
       await new Promise(ok => { fr.onload = ok; setTimeout(ok, 6000); }); await new Promise(ok => setTimeout(ok, 700));
       const d = fr.contentDocument; if (!d) { latinBad.push(r + ': iframe not readable'); fr.remove(); continue; }
@@ -118,7 +119,7 @@ async function audit() {
       fr.remove();
     }
     C.store.set('lang', prevLang);
-    add('No Latin-only visible labels in Bangla mode (acronyms and numbers allowed)', latinBad.length === 0, 'scanned /app, /demo-user, /demo-admin, /admin in Bangla; ' + (latinBad.length ? latinBad.length + ' found, e.g. ' + latinBad.slice(0, 80).join(' | ') : 'none found'));
+    add('No Latin-only visible labels in Bangla mode (acronyms and numbers allowed)', latinBad.length === 0, 'scanned 10 routes in Bangla (all except /audit and /prompt, which show the English prompt verbatim); ' + (latinBad.length ? latinBad.length + ' found, e.g. ' + latinBad.slice(0, 80).join(' | ') : 'none found'));
     res = { at: new Date().toISOString(), checks: out, score: out.filter(c => c.pass).length + '/' + out.length };
   }
   C.delegate(root, 'click', '[data-a]', async b => {

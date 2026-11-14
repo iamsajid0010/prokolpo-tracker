@@ -17,13 +17,11 @@ const roleBar = () => `<div class="row" role="group" aria-label="${t('View mode'
 const onboard = () => store.get('onb', false) ? '' : `<div class="card" style="border-color:var(--em)"><div class="row" style="justify-content:space-between"><h2>${t('Start here: 2-minute walkthrough', 'এখানে শুরু: ২ মিনিটের ওয়াকথ্রু')}</h2><button class="btn" data-act="onb">${t('Dismiss', 'বন্ধ করুন')}</button></div><ol><li>${t('Ashulia Union is already selected with sample data.', 'আশুলিয়া ইউনিয়ন নমুনা ডেটাসহ নির্বাচিত।')}</li><li>${t('Open a project card, then the Price audit tab.', 'একটি প্রকল্প কার্ড খুলে মূল্য নিরীক্ষা ট্যাব দেখুন।')}</li><li>${t('Read the projection formula in Overview.', 'ওভারভিউতে প্রক্ষেপণের সূত্র পড়ুন।')}</li><li>${t('Ask the copilot: “Which materials are above benchmark?”', 'কোপাইলটকে জিজ্ঞাসা করুন: “কোন উপকরণ বেঞ্চমার্কের উপরে?”')}</li></ol></div>`;
 
 
-let mapOn = false;
 function findUnion(id) { for (const d of D.geo.divisions) for (const s of d.districts) for (const u of s.upazilas) for (const n of u.unions) if (n.id === id) return { n, u, s, d }; return null; }
 function gmapCard(p) {
   const f = findUnion(p.union); if (!f || f.n.lat == null) return '';
-  const q = f.n.lat + ',' + f.n.lng, link = 'https://www.google.com/maps?q=' + q, name = nm(f.n) + ', ' + nm(f.u) + ', ' + nm(f.s);
-  const body = mapOn && !C.S.lite ? `<iframe title="${esc(t('Google Map of ', 'গুগল ম্যাপ: ') + name)}" src="https://www.google.com/maps?q=${q}&z=13&output=embed" loading="lazy" referrerpolicy="no-referrer" allowfullscreen></iframe>` : `<div class="mapph"><p><b>${esc(name)}</b><br><span class="sm mute">${t('Approximate location', 'আনুমানিক অবস্থান')}: ${fmt(f.n.lat, 4)}, ${fmt(f.n.lng, 4)}</span></p>${C.S.lite ? '' : `<button class="btn pri" type="button" data-loadmap>${t('Load interactive Google Map', 'ইন্টারঅ্যাক্টিভ গুগল ম্যাপ লোড করুন')}</button> `}<a class="btn" href="${link}" target="_blank" rel="noopener noreferrer">${t('Open in Google Maps', 'গুগল ম্যাপে খুলুন')}</a></div>`;
-  return `<div class="card" style="margin-top:12px"><h3>${t('Locate on map', 'মানচিত্রে অবস্থান')} <span class="tag implemented">${t('Implemented', 'বাস্তবায়িত')}</span></h3><div class="mapbox">${body}</div><p class="sm mute">${t('Third-party content: the map loads from Google only after you click, and Google may receive your IP address. Nothing else on this site contacts Google. ' + D.geo.coord_note_en, 'তৃতীয় পক্ষের কনটেন্ট: আপনি ক্লিক করলেই গুগল থেকে মানচিত্র লোড হয়, গুগল আপনার আইপি ঠিকানা পেতে পারে। এই সাইটের আর কিছু গুগলের সাথে যোগাযোগ করে না। ' + D.geo.coord_note_bn)}</p></div>`;
+  const link = 'https://www.google.com/maps?q=' + f.n.lat + ',' + f.n.lng, name = nm(f.n) + ', ' + nm(f.u) + ', ' + nm(f.s);
+  return `<div class="card" style="margin-top:12px"><h3>${t('Locate on map', 'মানচিত্রে অবস্থান')} <span class="tag implemented">${t('Implemented', 'বাস্তবায়িত')}</span></h3><div class="mapbox"><div class="mapph"><p><b>${esc(name)}</b><br><span class="sm mute">${t('Approximate location', 'আনুমানিক অবস্থান')}: ${fmt(f.n.lat, 4)}, ${fmt(f.n.lng, 4)}</span></p><a class="btn pri" href="${link}" target="_blank" rel="noopener noreferrer">${t('Open in Google Maps', 'গুগল ম্যাপে খুলুন')}</a></div></div><p class="sm mute">${t('This is a plain link: nothing is requested from Google unless you click it, and it opens in a new tab. ' + D.geo.coord_note_en, 'এটি সাধারণ লিংক: ক্লিক না করলে গুগলের কাছে কিছু চাওয়া হয় না, এবং এটি নতুন ট্যাবে খোলে। ' + D.geo.coord_note_bn)}</p></div>`;
 }
 function card(p, i) {
   const a = C.auditProject(p);
@@ -98,7 +96,6 @@ async function init() {
   C.delegate(root, 'click', '[data-mappin]', g => { const f = C.findUnion(g.dataset.mappin); if (!f) return; Object.assign(sel, { d: f.d.id, s: f.s.id, u: f.u.id, n: f.n.id }); store.set('sel', sel); pi = 0; tab = 'overview'; render(); });
   C.delegate(root, 'click', '[data-role]', b => { role = b.dataset.role; store.set('role', role); render(); });
   C.delegate(root, 'click', '[data-pi]', b => { pi = +b.dataset.pi; render(); });
-  C.delegate(root, 'click', '[data-loadmap]', () => { mapOn = true; render(); });
   C.delegate(root, 'click', '[data-tab]', b => { tab = b.dataset.tab; render(); });
   C.delegate(root, 'click', '[data-vote]', b => { const [k, id] = b.dataset.vote.split('|'); const v = votes(); if (v[id] === k) delete v[id]; else v[id] = k; store.set('votes', v); render(); });
   C.delegate(root, 'click', '[data-rev]', b => { const r = rev(); r[b.dataset.rev] ? delete r[b.dataset.rev] : r[b.dataset.rev] = true; store.set('reviewed', r); render(); });

@@ -3,6 +3,8 @@ Static multi-page site (vanilla HTML/CSS/JS ES modules, seed JSON in /data). Syn
 
 Routes (one folder + index.html each): /app /demo-user /demo-admin /admin /data /security /architecture /presentation /pitchdeck /audit /prompt /docs
 
+Third-party contact: Open-Meteo weather request, optional browser speech service for voice input, and a plain Google Maps link (nothing is requested until clicked). See /security.
+
 Local test: `python3 -m http.server 8000`, then open http://localhost:8000/app/
 
 Deploy (any static host): `npx vercel --prod` from this folder (Framework: Other; vercel.json sets trailingSlash), or upload the folder to a GitHub repo and enable Pages, or drag it into Netlify.
