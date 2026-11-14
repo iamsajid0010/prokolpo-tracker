@@ -1,5 +1,4 @@
 import * as C from './core.js';
-import { mapHTML, mapListHTML } from './map.js';
 const { t, esc, fmt, bdt, nm, dig, pill, $, $$, store, D } = C;
 const sel = store.get('sel', { d: 'dhaka', s: 'dhaka', u: 'savar', n: 'ashulia' });
 let pi = 0, tab = 'overview', role = store.get('role', 'citizen'), W = null, chat = [], nodeId = null;
@@ -85,8 +84,8 @@ function render() {
     <div class="tabs" role="tablist">${tabs.map(x => `<button role="tab" aria-selected="${tab === x[0]}" data-tab="${x[0]}">${x[1]}</button>`).join('')}</div>${tab === 'overview' ? overview(p, a) + gmapCard(p) : tab === 'audit' ? C.priceTableHTML(p, a) : logs(p)}</div>
     <div style="margin-top:12px">${roleExtra(p, a)}</div><div class="grid" style="margin-top:12px"><div class="card"><h3>${t('Knowledge graph', 'নলেজ গ্রাফ')}</h3>${C.graphHTML(p)}<p class="sm" id="node-d" aria-live="polite">${nodeId ? esc(C.nodeDetails(p, nodeId)) : t('Select a node for details.', 'বিস্তারিত দেখতে নোড নির্বাচন করুন।')}</p></div>${copilotHTML(p)}</div>`;
   }
-  const mapCard = `<div class="card"><div class="row" style="justify-content:space-between"><h2>${t('Map', 'মানচিত্র')}</h2><span class="tag implemented">${t('Implemented', 'বাস্তবায়িত')}</span></div><p class="sm mute">${t('Schematic outline for orientation, not an official boundary. Click a division or a ★ union.', 'দিকনির্দেশের জন্য পরিকল্পিত রূপরেখা, সরকারি সীমানা নয়। বিভাগ বা ★ ইউনিয়নে ক্লিক করুন।')}</p>${C.S.lite ? mapListHTML() : mapHTML(sel)}</div>`;
-  root.innerHTML = onboard() + `<div class="mapgrid">${mapCard}<div class="grid" style="align-content:start">${selectors(G)}${roleBar()}</div></div>` + `<div style="height:12px"></div>` + main;
+  // schematic map removed: it was only an approximation; the Google Map card in each project is used instead
+  root.innerHTML = onboard() + `<div class="grid">${selectors(G)}${roleBar()}</div>` + `<div style="height:12px"></div>` + main;
   C.applyLangPh?.();
 }
 async function init() {
