@@ -689,3 +689,22 @@ body.lite *, body.lite *::before, body.lite *::after {
   font-size: 0.82rem;
   color: #475569;
 }
+/* =========================================================
+   PERFORMANCE FIXES (smooth scrolling, no flicker)
+   ========================================================= */
+/* 1. Fixed background repaints on every scroll frame: use normal scrolling background */
+body { background-attachment: scroll !important; }
+/* 2. Full-screen fixed pseudo layers: promote to their own GPU layer, make them cheap */
+body::before, body::after { will-change: transform; transform: translateZ(0); }
+/* 3. Blur behind every card is very expensive while scrolling: remove it */
+.card, .bd-kpi { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; background: #fff !important; }
+/* 4. Cards re-render (innerHTML) so the entrance animation replayed and text vanished/reappeared:
+      cards are now always visible, no opacity-0 start state */
+.card { animation: none !important; opacity: 1 !important; }
+.bd-kpi { animation: none !important; opacity: 1 !important; }
+/* 5. Endless animations that repaint (box-shadow, background-position) are stopped */
+.bar > i { animation: none !important; background-size: 100% 100% !important; }
+.bd-hero::before { animation: none !important; display: none; }
+.bd-stamp, .bd-hero-art, .bd-kpi-ico { animation: none !important; }
+/* 7. Respect devices that ask for less motion */
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
