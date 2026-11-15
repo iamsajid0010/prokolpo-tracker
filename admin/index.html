@@ -1,15 +1,135 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Admin (demo) · Prokolpo Tracker</title><meta name="description" content="Demo admin: local user list, contractor watchlist, editable benchmark rates and feature toggles. No real authentication.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://api.open-meteo.com; base-uri 'none'; form-action 'none'">
-<link rel="stylesheet" href="../assets/style.css"></head>
-<body data-page="admin"><a class="skip" href="#main" data-bn="মূল কনটেন্টে যান">Skip to content</a>
-<div class="demo-banner" role="note"><span data-bn="কৃত্রিম ডেমো ডেটা। প্রকৃত সরকারি রেকর্ড নয়।">Synthetic demo data. Not real government records.</span></div>
-<div class="shell"><nav class="rail" id="rail" aria-label="Routes"><div class="brand" data-bn="প্রকল্প ট্র্যাকার">Prokolpo Tracker</div><a href="../app/"><span data-bn="মূল অ্যাপ">Main App</span><small>/app</small></a><a href="../demo-user/"><span data-bn="ডেমো ইউজার">Demo User</span><small>/demo-user</small></a><a href="../demo-admin/"><span data-bn="ডেমো অ্যাডমিন">Demo Admin</span><small>/demo-admin</small></a><a href="../admin/" aria-current="page"><span data-bn="অ্যাডমিন (ডেমো)">Admin (demo)</span><small>/admin</small></a><a href="../data/"><span data-bn="ডেটা">Data</span><small>/data</small></a><a href="../security/"><span data-bn="নিরাপত্তা">Security</span><small>/security</small></a><a href="../architecture/"><span data-bn="আর্কিটেকচার">Architecture</span><small>/architecture</small></a><a href="../presentation/"><span data-bn="উপস্থাপনা">Presentation</span><small>/presentation</small></a><a href="../pitchdeck/"><span data-bn="পিচ ডেক">Pitch Deck</span><small>/pitchdeck</small></a><a href="../audit/"><span data-bn="অডিট">Audit</span><small>/audit</small></a><a href="../prompt/"><span data-bn="প্রম্পট">Prompt</span><small>/prompt</small></a><a href="../docs/"><span data-bn="ডকস">Docs</span><small>/docs</small></a></nav>
-<div style="min-width:0"><div class="top"><button class="btn menu-btn" id="menu-btn" aria-label="Menu">☰</button><span class="b" data-bn="প্রকল্প ট্র্যাকার">Prokolpo Tracker</span><span class="sp"></span>
-<div role="group" aria-label="Language"><button class="btn on" data-set-lang="en" aria-pressed="true">EN</button> <button class="btn" data-set-lang="bn" aria-pressed="false">বাংলা</button></div>
-<button class="btn" id="lite-btn" aria-pressed="false">Lite mode</button><button class="btn" id="theme-btn" aria-label="Theme" data-bn="থিম">Theme</button></div>
-<main id="main" tabindex="-1"><h1 data-bn="অ্যাডমিন (ডেমো)">Admin (demo)</h1>
-<div id="page-root"><p data-bn="শুধু ডেমো, প্রকৃত প্রমাণীকরণ নেই। পরিকল্পিত: এসএসও ও টুএফএ। এই পেজে ভূমিকা ড্রপডাউনসহ ব্যবহারকারী তালিকা, ঠিকাদার ওয়াচলিস্ট (ওয়াচলিস্ট, ব্ল্যাকলিস্ট নয়; সিদ্ধান্ত মানুষের), সম্পাদনযোগ্য বেঞ্চমার্ক রেট যা সব জায়গায় ব্যাজ আবার গণনা করে, এবং এআই-ফিচার টগল আছে যা প্রক্ষেপণ ও কোপাইলট সত্যিই চালু বা বন্ধ করে। সম্পাদনার জন্য জাভাস্ক্রিপ্ট দরকার।">Demo only, no real authentication. Planned: SSO and 2FA. This page has a user list with role dropdowns, a contractor watchlist (a watchlist, not a blacklist; humans decide), editable benchmark rates that recompute badges everywhere, and AI-feature toggles that really switch the projection and copilot on or off. JavaScript is needed to edit.</p><h3 data-bn="ডিফল্ট বেঞ্চমার্ক রেট (উদাহরণমূলক)">Default benchmark rates (illustrative)</h3><div class="tw"><table><thead><tr><th data-bn="উপকরণ">Material</th><th data-bn="একক">Unit</th><th data-bn="রেট ৳">Rate ৳</th><th data-bn="সরবরাহকারী (কাল্পনিক)">Supplier (fictional)</th></tr></thead><tbody><tr><td><span data-bn="৫০০ডব্লিউ টিএমটি রড">500W TMT Steel Rod</span></td><td>kg</td><td>92</td><td><span data-bn="ডেমো স্টিল কোং">Demo Steel Co.</span></td></tr><tr><td><span data-bn="পোর্টল্যান্ড কম্পোজিট সিমেন্ট">Portland Composite Cement</span></td><td>bag</td><td>560</td><td><span data-bn="ডেমো সিমেন্ট লিমিটেড">Demo Cement Ltd.</span></td></tr><tr><td><span data-bn="১ম শ্রেণির ইট">1st Class Brick</span></td><td>pc</td><td>13.5</td><td><span data-bn="ডেমো ব্রিকস লিমিটেড">Demo Bricks Ltd.</span></td></tr><tr><td><span data-bn="সিলেট বালু">Sylhet Sand</span></td><td>cft</td><td>62</td><td><span data-bn="ডেমো অ্যাগ্রিগেটস কোং">Demo Aggregates Co.</span></td></tr><tr><td><span data-bn="পাথর কুচি ২০মিমি">Stone Chips 20mm</span></td><td>cft</td><td>215</td><td><span data-bn="ডেমো অ্যাগ্রিগেটস কোং">Demo Aggregates Co.</span></td></tr><tr><td><span data-bn="বিটুমিন ৬০/৭০">Bitumen 60/70</span></td><td>kg</td><td>78</td><td><span data-bn="ডেমো বিটুমিন সাপ্লাই">Demo Bitumen Supply</span></td></tr><tr><td><span data-bn="আরসিসি পাইপ ৯০০মিমি">RCC Pipe 900mm</span></td><td>rft</td><td>2850</td><td><span data-bn="ডেমো পাইপ ওয়ার্কস">Demo Pipe Works</span></td></tr><tr><td><span data-bn="সোলার প্যানেল ৫৫০ওয়াট">Solar Panel 550W</span></td><td>pc</td><td>21500</td><td><span data-bn="ডেমো সোলার ইম্পোর্টস">Demo Solar Imports</span></td></tr></tbody></table></div><p data-bn="রেট উদাহরণমূলক, সরকারি পিডব্লিউডি শিডিউলের সাথে যাচাই করুন। পরিবহন ও বাল্ক ছাড় ধরা হয়নি। সম্পাদিত রেট ধনাত্মক সংখ্যা হতে হবে; ভুল ইনপুটে ইনলাইন ত্রুটি দেখায়।">Rates are illustrative, verify with the official PWD schedule. They ignore transport and bulk discounts. Edited rates must be positive numbers; invalid input shows an inline error.</p></div>
-<noscript><p class="noscript-note">JavaScript is needed for interactive features. The text and tables on this page are readable without it.</p></noscript><section class="card" id="feat-status" style="margin-top:14px"><h2 data-bn="এই পেজের ফিচার ও অবস্থা">Feature status on this page</h2><ul><li class="feat"><span data-bn="রোল ড্রপডাউনসহ ব্যবহারকারী তালিকা (এই ব্রাউজারে ডেমো অবস্থা)">User list with role dropdowns (demo state in this browser)</span> <span class="tag implemented" data-bn="বাস্তবায়িত">Implemented</span></li><li class="feat"><span data-bn="ঠিকাদার ওয়াচলিস্ট (সিদ্ধান্ত মানুষের)">Contractor watchlist (humans decide)</span> <span class="tag implemented" data-bn="বাস্তবায়িত">Implemented</span></li><li class="feat"><span data-bn="বৈধতা যাচাইসহ সম্পাদনযোগ্য বেঞ্চমার্ক রেট, যা সব জায়গায় ব্যাজ আবার গণনা করে">Editable benchmark rates with validation that recompute badges everywhere</span> <span class="tag implemented" data-bn="বাস্তবায়িত">Implemented</span></li><li class="feat"><span data-bn="প্রক্ষেপণ ও কোপাইলটের এআই-ফিচার টগল">AI-feature toggles for projection and copilot</span> <span class="tag implemented" data-bn="বাস্তবায়িত">Implemented</span></li><li class="feat"><span data-bn="প্রকৃত প্রমাণীকরণ: এসএসও ও টুএফএ">Real authentication: SSO and 2FA</span> <span class="tag planned" data-bn="পরিকল্পিত">Planned</span></li><li class="feat"><span data-bn="সার্ভার-সাইড সংরক্ষণ ও অডিট লগ">Server-side storage and audit log</span> <span class="tag planned" data-bn="পরিকল্পিত">Planned</span></li></ul></section></main></div></div>
-<script type="module" src="../assets/pages1.js"></script></body></html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>অ্যাডমিন পোর্টাল · বাংলাদেশ প্রকল্প ট্র্যাকার</title>
+  <meta name="description" content="Demo admin: local user list, contractor watchlist, editable benchmark rates and feature toggles. No real authentication.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://api.open-meteo.com; base-uri 'none'; form-action 'none'">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body data-page="admin">
+  <a class="skip" href="#main" data-bn="মূল কনটেন্টে যান">Skip to content</a>
+
+  <!-- Top Dark Green Government Strip -->
+  <div class="bd-top-bar">
+    <div class="bd-wrap">
+      <span data-bn="স্বচ্ছতা ও জবাবদিহিতার মাধ্যমে উন্নয়নের পথে বাংলাদেশ · কৃত্রিম ডেমো ডেটা">স্বচ্ছতা ও জবাবদিহিতার মাধ্যমে উন্নয়নের পথে বাংলাদেশ · Synthetic Demo Data</span>
+      <div class="bd-controls">
+        <button class="bd-ctrl-btn on" data-set-lang="en" aria-pressed="true">EN</button>
+        <button class="bd-ctrl-btn" data-set-lang="bn" aria-pressed="false">বাংলা</button>
+        <button class="bd-ctrl-btn" id="lite-btn" aria-pressed="false">Lite mode</button>
+        <button class="bd-ctrl-btn" id="theme-btn" style="display:none">Theme</button>
+        <button class="bd-ctrl-btn" id="menu-btn" style="display:none">☰</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- White Portal Header with Govt Seal & Top Menu -->
+  <header class="bd-header">
+    <div class="bd-wrap">
+      <a href="../" class="bd-brand">
+        <div class="bd-seal" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 36 36">
+            <circle cx="18" cy="18" r="15" fill="#006A4E" stroke="#C49A45" stroke-width="1.5"/>
+            <circle cx="17" cy="18" r="7" fill="#F42A41"/>
+            <path d="M8 23c5-4 15-4 20 0" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <div class="bd-brand-title" data-bn="বাংলাদেশ প্রকল্প ট্র্যাকার">বাংলাদেশ প্রকল্প ট্র্যাকার</div>
+          <div class="bd-brand-sub" data-bn="উন্নয়ন প্রকল্পের স্বচ্ছতা, জনগণের অধিকার">উন্নয়ন প্রকল্পের স্বচ্ছতা, জনগণের অধিকার</div>
+        </div>
+      </a>
+
+      <nav class="bd-nav" aria-label="Routes">
+        <a href="../"><span data-bn="হোম">হোম</span></a>
+        <a href="../app/"><span data-bn="প্রকল্পসমূহ">প্রকল্পসমূহ</span></a>
+        <a href="../demo-user/"><span data-bn="অভিযোগ ও নাগরিক">অভিযোগ</span></a>
+        <a href="../demo-admin/"><span data-bn="অডিট">অডিট</span></a>
+        <a href="../data/"><span data-bn="ডেটা">ডেটা</span></a>
+        <a href="../architecture/"><span data-bn="সম্পর্কিত">সম্পর্কিত</span></a>
+        <a href="../admin/" aria-current="page" class="login-pill"><span data-bn="অ্যাডমিন">অ্যাডমিন</span></a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Scenic Padma Bridge & River Banner -->
+  <section class="bd-hero">
+    <svg class="bd-hero-art" viewBox="0 0 1440 240" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <circle cx="960" cy="65" r="45" fill="#F42A41" opacity="0.15"/>
+      <g fill="#7FA89B" opacity="0.25" transform="translate(60, 20)">
+        <polygon points="90,0 45,175 135,175"/><polygon points="90,25 25,175 155,175" opacity="0.7"/>
+      </g>
+      <path d="M0 175 Q 400 155 800 180 T 1440 165 L 1440 240 L 0 240 Z" fill="#4B91A8" opacity="0.45"/>
+      <g stroke="#2C4A52" fill="none" opacity="0.38">
+        <path d="M520 135 L1440 110" stroke-width="8"/><path d="M640 132 L632 220 M840 126 L832 225 M1040 120 L1032 230 M1240 114 L1232 235" stroke-width="6"/>
+      </g>
+    </svg>
+    <div class="bd-hero-inner">
+      <div>
+        <h1 data-bn="কেন্দ্রীয় প্রশাসন ও বেঞ্চমার্ক নিয়ন্ত্রণ">কেন্দ্রীয় প্রশাসন ও <span>বেঞ্চমার্ক নিয়ন্ত্রণ</span></h1>
+        <p data-bn="নির্মাণ উপকরণের সরকারি বেঞ্চমার্ক রেট, ঠিকাদার ওয়াচলিস্ট ও অডিট মডিউল ব্যবস্থাপনা">নির্মাণ উপকরণের সরকারি বেঞ্চমার্ক রেট, ঠিকাদার ওয়াচলিস্ট ও অডিট মডিউল ব্যবস্থাপনা</p>
+      </div>
+      <div class="bd-stamp">
+        <strong>স্মার্ট বাংলাদেশ</strong>
+        <span>স্বচ্ছতা • জবাবদিহিতা • উন্নয়ন</span>
+      </div>
+    </div>
+  </section>
+
+  <main id="main" tabindex="-1">
+    <!-- 5 Bangladesh KPI Cards -->
+    <section class="bd-kpi-row">
+      <div class="bd-kpi"><div class="bd-kpi-ico g">🧱</div><div><div class="bd-kpi-val">৮টি উপকরণ</div><div class="bd-kpi-lbl">বেঞ্চমার্ক মূল্য তালিকা</div></div></div>
+      <div class="bd-kpi"><div class="bd-kpi-ico b">👥</div><div><div class="bd-kpi-val">৪ জন কর্মকর্তা</div><div class="bd-kpi-lbl">সক্রিয় রোল অ্যাক্সেস</div></div></div>
+      <div class="bd-kpi"><div class="bd-kpi-ico e">✓</div><div><div class="bd-kpi-val">সক্রিয়</div><div class="bd-kpi-lbl">এআই প্রক্ষেপণ ও কোপাইলট</div></div></div>
+      <div class="bd-kpi"><div class="bd-kpi-ico r">👁️</div><div><div class="bd-kpi-val">ওয়াচলিস্ট</div><div class="bd-kpi-lbl">ঠিকাদার পর্যবেক্ষণ তালিকা</div></div></div>
+      <div class="bd-kpi"><div class="bd-kpi-ico y">🏛️</div><div><div class="bd-kpi-val">পিডব্লিউডি</div><div class="bd-kpi-lbl">রেট শিডিউল রেফারেন্স</div></div></div>
+    </section>
+
+    <div id="page-root" class="card">
+      <p data-bn="শুধু ডেমো, প্রকৃত প্রমাণীকরণ নেই। পরিকল্পিত: এসএসও ও টুএফএ।">Demo only, no real authentication. Planned: SSO and 2FA.</p>
+      <h3 data-bn="ডিফল্ট বেঞ্চমার্ক রেট (উদাহরণমূলক)">Default benchmark rates (illustrative)</h3>
+      <div class="tw"><table><thead><tr><th>Material</th><th>Unit</th><th>Rate ৳</th><th>Supplier</th></tr></thead><tbody><tr><td>500W TMT Steel Rod</td><td>kg</td><td>92</td><td>Demo Steel Co.</td></tr><tr><td>Portland Composite Cement</td><td>bag</td><td>560</td><td>Demo Cement Ltd.</td></tr></tbody></table></div>
+    </div>
+
+    <noscript><p>JavaScript is needed for interactive features.</p></noscript>
+
+    <section class="card" id="feat-status">
+      <h2 data-bn="এই পেজের ফিচার ও অবস্থা">এই পেজের ফিচার ও অবস্থা (Feature Status)</h2>
+      <ul>
+        <li class="feat"><span>User list with role dropdowns</span> <span class="tag implemented">Implemented</span></li>
+        <li class="feat"><span>Contractor watchlist (humans decide)</span> <span class="tag implemented">Implemented</span></li>
+        <li class="feat"><span>Editable benchmark rates</span> <span class="tag implemented">Implemented</span></li>
+        <li class="feat"><span>AI-feature toggles for projection and copilot</span> <span class="tag implemented">Implemented</span></li>
+      </ul>
+    </section>
+  </main>
+
+  <!-- Deep Green Bangladesh Skyline Footer -->
+  <footer class="bd-footer">
+    <svg class="skyline" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 100 L180 100 L210 55 L240 100 L360 100 L360 65 L420 65 L420 100 L560 100 L640 40 L720 100 L880 100 L880 50 L930 50 L930 100 L1120 100 L1160 35 L1200 100 L1440 100 L1440 120 L0 120 Z" fill="#FFFFFF"/>
+    </svg>
+    <div class="bd-wrap">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="bd-seal" style="width:40px;height:40px">
+          <svg width="26" height="26" viewBox="0 0 36 36"><circle cx="18" cy="18" r="15" fill="#006A4E" stroke="#C49A45" stroke-width="1.5"/><circle cx="17" cy="18" r="7" fill="#F42A41"/></svg>
+        </div>
+        <div>
+          <strong style="color:#fff;display:block">গণপ্রজাতন্ত্রী বাংলাদেশ সরকার (প্রোটোটাইপ)</strong>
+          <span style="font-size:.85rem">বাংলাদেশ প্রকল্প ট্র্যাকার · National Infrastructure Administration</span>
+        </div>
+      </div>
+      <strong style="color:#fff;font-size:1rem">স্বচ্ছতা • জবাবদিহিতা • উন্নয়ন</strong>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="soc-dot">f</span><span class="soc-dot">▶</span><span class="soc-dot">𝕏</span><span class="soc-dot">in</span>
+        <span style="font-size:.8rem;margin-left:6px">© ২০২৬, বাংলাদেশ প্রকল্প ট্র্যাকার</span>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="../assets/pages1.js"></script>
+</body>
+</html>
