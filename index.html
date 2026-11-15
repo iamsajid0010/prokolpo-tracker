@@ -484,7 +484,13 @@
 <!-- <script type="module" src="assets/intro.js"></script> -->
  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
-    const satMap = L.map('bd-satellite-map').setView([23.7808, 90.3500], 7);
+    const satMap = L.map('bd-satellite-map', { scrollWheelZoom: false, zoomAnimation: false, fadeAnimation: false, markerZoomAnimation: false, preferCanvas: true }).setView([23.7808, 90.3500], 7);
+
+    // Scroll fix: page scrolls normally; wheel-zoom turns on only after you click the map
+    satMap.on('click', () => satMap.scrollWheelZoom.enable());
+    satMap.on('mouseout', () => satMap.scrollWheelZoom.disable());
+    // Pin icon without external image files (the default marker image was broken)
+    const pinIcon = L.divIcon({ className: '', html: '<div style="width:18px;height:18px;border-radius:50% 50% 50% 0;background:#F42A41;border:2px solid #fff;transform:rotate(-45deg);box-shadow:0 1px 4px rgba(0,0,0,.5)"></div>', iconSize: [18,18], iconAnchor: [9,18], popupAnchor: [0,-16] });
     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
       attribution: 'Tiles &copy; Esri'
     }).addTo(satMap);

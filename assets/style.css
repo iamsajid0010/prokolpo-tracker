@@ -697,7 +697,7 @@ body { background-attachment: scroll !important; }
 /* 2. Full-screen fixed pseudo layers: promote to their own GPU layer, make them cheap */
 body::before, body::after { will-change: transform; transform: translateZ(0); }
 /* 3. Blur behind every card is very expensive while scrolling: remove it */
-.card, .bd-kpi { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; background: #fff !important; }
+.card, .bd-kpi, .panel-card, .kpi-card { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; background-color: var(--panel); }
 /* 4. Cards re-render (innerHTML) so the entrance animation replayed and text vanished/reappeared:
       cards are now always visible, no opacity-0 start state */
 .card { animation: none !important; opacity: 1 !important; }
@@ -708,3 +708,39 @@ body::before, body::after { will-change: transform; transform: translateZ(0); }
 .bd-stamp, .bd-hero-art, .bd-kpi-ico { animation: none !important; }
 /* 7. Respect devices that ask for less motion */
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+/* 8. Dark/light theme: text stayed invisible because cards were hard-coded white. Cards now follow the theme. */
+html[data-theme=dark] .card, html[data-theme=dark] .bd-kpi { background-color: var(--panel); color: var(--ink); }
+/* 9. Hover lift moved cards under the cursor while scrolling fast (hover flicker + big shadow repaint) */
+.card:hover, .bd-kpi:hover { transform: none !important; }
+/* 10. Page-in fade on <main> forced a full-page layer: remove */
+main, .main, [class*="page"] { animation: none; }
+
+/* 11. DARK THEME TEXT FIX: brand-dark-green text sat on dark panels (invisible). Use light tints in dark mode. */
+html[data-theme=dark] { --soft-mint: #133A2E; --bengal-cream: #33270E; }
+html[data-theme=dark] h1, html[data-theme=dark] h2, html[data-theme=dark] h3, html[data-theme=dark] h4,
+html[data-theme=dark] .big, html[data-theme=dark] .bd-brand-title, html[data-theme=dark] .bd-stamp strong,
+html[data-theme=dark] .slide h2, html[data-theme=dark] .noscript-note, html[data-theme=dark] .btn:hover,
+html[data-theme=dark] th, html[data-theme=dark] .tag { color: #6EE7B7; }
+html[data-theme=dark] .btn, html[data-theme=dark] .bd-stamp, html[data-theme=dark] select, html[data-theme=dark] input { color: var(--ink); background-color: var(--panel); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme=light]) { --soft-mint: #133A2E; --bengal-cream: #33270E; }
+  :root:not([data-theme=light]) h1, :root:not([data-theme=light]) h2, :root:not([data-theme=light]) h3, :root:not([data-theme=light]) h4,
+  :root:not([data-theme=light]) .big, :root:not([data-theme=light]) th { color: #6EE7B7; }
+}
+
+/* 12. DARK THEME: page background was hard-coded light, so light text vanished on it */
+html[data-theme=dark] body { background-color: var(--bg); background-image: none; color: var(--ink); }
+html[data-theme=dark] body::before, html[data-theme=dark] body::after { opacity: .08; }
+html[data-theme=dark] .pill.ok { color: #6EE7B7; background: #133A2E; border-color: #1E4036; }
+html[data-theme=dark] .pill.bad { background: #42141B; color: #FF8A99; border-color: #6b2330; }
+html[data-theme=dark] .pill.info { background: #13323D; color: #7CC4DD; border-color: #1f4b5b; }
+html[data-theme=dark] .bd-kpi-num { color: #6EE7B7; }
+html[data-theme=dark] .bd-kpi-txt, html[data-theme=dark] .mute, html[data-theme=dark] .sm { color: var(--mute); }
+html[data-theme=dark] .bd-kpi-ico { background: #133A2E; }
+html[data-theme=dark] main { color: var(--ink); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme=light]) body { background-color: var(--bg); background-image: none; color: var(--ink); } }
+html[data-theme=dark] .bd-kpi { background: var(--panel) !important; border-color: var(--line) !important; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme=light]) .bd-kpi { background: var(--panel) !important; } }
+html[data-theme=dark] .bd-kpi-box { background: var(--panel) !important; border-color: var(--line) !important; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme=light]) .bd-kpi-box { background: var(--panel) !important; } }
