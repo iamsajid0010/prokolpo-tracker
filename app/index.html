@@ -42,7 +42,7 @@
 <!-- Interactive Satellite Infrastructure Map -->
     <section class="card" style="padding: 16px;">
       <div class="row" style="justify-content: space-between; margin-bottom: 10px;">
-        <h2 style="margin:0;">🛰️ প্রকল্প এলাকা স্যাটেলাইট ভিউ (Satellite View Map)</h2>
+        <h2 class="map-title" style="margin:0;">🛰️ প্রকল্প এলাকা স্যাটেলাইট ভিউ (Satellite View Map)</h2>
         <div class="row">
           <button type="button" class="btn sm" onclick="appSatMap.flyTo([23.9022, 90.3150], 15)">আশুলিয়া জুম</button>
           <button type="button" class="btn sm" onclick="appSatMap.flyTo([23.8615, 90.3340], 15)">বিরুলিয়া সেতু</button>
@@ -61,16 +61,12 @@
 <script type="module" src="../assets/app.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
-    const appSatMap = L.map('app-satellite-map', { scrollWheelZoom: false, zoomAnimation: false, fadeAnimation: false, markerZoomAnimation: false, preferCanvas: true }).setView([23.9022, 90.3150], 13);
+    const appSatMap = L.map('app-satellite-map', { scrollWheelZoom: false }).setView([23.9022, 90.3150], 13);
 
-    // Scroll fix: page scrolls normally; wheel-zoom turns on only after you click the map
-    appSatMap.on('click', () => appSatMap.scrollWheelZoom.enable());
-    appSatMap.on('mouseout', () => appSatMap.scrollWheelZoom.disable());
-    // Pin icon without external image files (the default marker image was broken)
-    const pinIcon = L.divIcon({ className: '', html: '<div style="width:18px;height:18px;border-radius:50% 50% 50% 0;background:#F42A41;border:2px solid #fff;transform:rotate(-45deg);box-shadow:0 1px 4px rgba(0,0,0,.5)"></div>', iconSize: [18,18], iconAnchor: [9,18], popupAnchor: [0,-16] });
+    appSatMap.on('click', () => appSatMap.scrollWheelZoom.enable()); appSatMap.on('mouseout', () => appSatMap.scrollWheelZoom.disable()); // wheel scrolls the page; zoom with the wheel only after clicking the map
     
     const satTiles = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-      attribution: 'Tiles &copy; Esri'
+      attribution: 'Tiles &copy; Esri', updateWhenZooming: false, keepBuffer: 1
     }).addTo(appSatMap);
 
     const streetTiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -95,8 +91,9 @@
     ];
 
     seedPins.forEach(pin => {
-      L.marker(pin.coords, { icon: pinIcon }).addTo(appSatMap)
+      L.marker(pin.coords).addTo(appSatMap)
         .bindPopup(`<span style="color:#006A4E;font-weight:bold;">${pin.id}</span><br>${pin.title}`);
     });
   </script>
+<script src="../assets/perf.js" defer></script>
 </body></html></body></html>

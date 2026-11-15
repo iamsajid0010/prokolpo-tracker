@@ -570,3 +570,23 @@ body {
 .shapla-bob-3 {
   animation: shaplaFloat 3.9s ease-in-out infinite 1.5s !important;
 }
+/* =========================================================
+   PERFORMANCE FIXES (visual design unchanged)
+   - background-attachment:fixed forced a full repaint on every scroll frame; the same
+     gradients now live on a fixed layer that the GPU composites without repainting.
+   - backdrop-filter on every card was the main scroll-jank source; the cards are 94% opaque
+     so blur(6px) was practically invisible.
+   ========================================================= */
+
+:root { background-color: #F4F8F6; }
+:root::before {
+  content: ""; position: fixed; inset: 0; z-index: -3; pointer-events: none;
+  background-image: radial-gradient(45% 38% at 15% 25%, rgba(0, 106, 78, 0.07) 0%, transparent 70%),
+    radial-gradient(35% 30% at 85% 30%, rgba(244, 42, 65, 0.04) 0%, transparent 65%),
+    radial-gradient(50% 42% at 75% 85%, rgba(43, 122, 155, 0.08) 0%, transparent 70%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%23006A4E' stroke-width='0.8' stroke-opacity='0.13'%3E%3Cpath d='M32 4 L60 32 L32 60 L4 32 Z'/%3E%3Ccircle cx='32' cy='32' r='10'/%3E%3Ccircle cx='32' cy='32' r='3' fill='%23F42A41' fill-opacity='0.12' stroke='none'/%3E%3C/g%3E%3C/svg%3E");
+  transform: translateZ(0);
+}
+body { background: transparent !important; }
+.panel-card, .kpi-card { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+.perf-off, .perf-off *, .perf-off *::before, .perf-off *::after { animation-play-state: paused !important; }
