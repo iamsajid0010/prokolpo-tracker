@@ -11,7 +11,7 @@ export const store = {
 };
 
 /* ---------- language, formatting ---------- */
-export const S = { lang: store.get('lang', 'en'), lite: store.get('lite', false), theme: store.get('theme', null) };
+export const S = { lang: store.get('lang', 'en'), lite: store.get('lite', false), theme: store.get('theme', 'dark') };
 export const t = (en, bn) => (S.lang === 'bn' ? bn : en);
 const BN = '০১২৩৪৫৬৭৮৯';
 export const dig = s => (S.lang === 'bn' ? String(s).replace(/\d/g, d => BN[d]) : String(s));

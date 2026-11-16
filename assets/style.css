@@ -186,7 +186,6 @@ main {
   margin: 0 auto;
   padding: 18px 24px 56px;
   min-width: 0;
-  animation: pagein .45s ease both;
 }
 @keyframes pagein { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 
@@ -289,10 +288,10 @@ button.card:hover, a.card:hover {
   box-shadow: 0 12px 24px -10px rgba(0, 106, 78, 0.22);
 }
 
-.g4 > .card:nth-child(4n+1) { background: linear-gradient(135deg, var(--panel) 65%, var(--soft-mint)); border-left: 4px solid var(--bd-green); }
-.g4 > .card:nth-child(4n+2) { background: linear-gradient(135deg, var(--panel) 65%, #EBF5F8); border-left: 4px solid var(--river-blue); }
-.g4 > .card:nth-child(4n+3) { background: linear-gradient(135deg, var(--panel) 65%, var(--bengal-cream)); border-left: 4px solid var(--gold); }
-.g4 > .card:nth-child(4n+4) { background: linear-gradient(135deg, var(--panel) 65%, #FDECEE); border-left: 4px solid var(--bd-red); }
+.g4 > .card:nth-child(4n+1) { background: linear-gradient(135deg, var(--panel) 65%, var(--emsoft)); border-left: 4px solid var(--bd-green); }
+.g4 > .card:nth-child(4n+2) { background: linear-gradient(135deg, var(--panel) 65%, var(--bluesoft)); border-left: 4px solid var(--river-blue); }
+.g4 > .card:nth-child(4n+3) { background: linear-gradient(135deg, var(--panel) 65%, var(--ambersoft)); border-left: 4px solid var(--gold); }
+.g4 > .card:nth-child(4n+4) { background: linear-gradient(135deg, var(--panel) 65%, var(--crimsoft)); border-left: 4px solid var(--bd-red); }
 
 .grid { display: grid; gap: 14px; }
 .g2 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
@@ -314,11 +313,12 @@ button.card:hover, a.card:hover {
 .btn.pri, .btn.on { background: var(--bd-green); border-color: var(--bd-green); color: #FFFFFF; box-shadow: 0 2px 6px rgba(0, 106, 78, 0.25); }
 .btn.pri:hover { background: var(--bd-forest); border-color: var(--bd-forest); color: #FFFFFF; }
 
-select, input[type=text], input[type=number], textarea {
-  background: #F8FAFC; border: 1.5px solid var(--line);
+  select, input[type=text], input[type=number], textarea {
+  background: #F8FAFC; color: #1E2D3D; border: 1.5px solid var(--line);
   border-radius: 8px; padding: 8px 10px; width: 100%; min-width: 0;
   transition: border-color .15s, box-shadow .15s;
 }
+
 select:focus, input[type=text]:focus, input[type=number]:focus, textarea:focus {
   border-color: var(--bd-green); background: #FFFFFF;
   box-shadow: 0 0 0 3px rgba(0, 106, 78, 0.14);
@@ -447,7 +447,7 @@ input[aria-invalid=true] { border-color: var(--bd-red); border-width: 2px; }
    ========================================================= */
 body {
   position: relative;
-  background-color: #F4F8F6;
+  background-color: var(--bg);
   background-image:
     radial-gradient(45% 38% at 12% 14%, rgba(0, 106, 78, 0.08) 0%, transparent 70%),
     radial-gradient(35% 30% at 88% 18%, rgba(244, 42, 65, 0.05) 0%, transparent 65%),
@@ -487,8 +487,8 @@ body::after {
 
 /* Slight translucent glass effect on cards so the background shines gently through */
 .card, .bd-kpi {
-  background: rgba(255, 255, 255, 0.94);
-  backdrop-filter: blur(6px);
+  background: var(--panel);
+  color: var(--ink);
 }
 /* =========================================================
    BOLD & CONTINUOUS BANGLADESH PORTAL ANIMATIONS (INNER PAGES)
@@ -559,7 +559,7 @@ body::after {
 .bd-kpi {
   position: relative !important;
   overflow: hidden !important;
-  animation: bdGrandEntrance 0.75s cubic-bezier(0.22, 1, 0.36, 1) both, bdBorderGlow 4s ease-in-out infinite !important;
+  animation: bdBorderGlow 4s ease-in-out infinite !important;
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease !important;
 }
 .bd-kpi:nth-child(1) { animation-delay: 0.05s, 0s !important; }
@@ -587,9 +587,9 @@ body::after {
 .card {
   position: relative !important;
   overflow: hidden !important;
-  animation: bdGrandEntrance 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both !important;
   transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease !important;
 }
+
 .card:hover {
   transform: translateY(-4px) !important;
   box-shadow: 0 18px 36px -10px rgba(0, 77, 58, 0.2) !important;
@@ -672,6 +672,7 @@ body.lite *, body.lite *::before, body.lite *::after {
 }
 .bd-kpi-box {
   background: #FFFFFF;
+  color: #1E2D3D;
   border: 1px solid #DCE5E1;
   border-radius: 14px;
   padding: 16px;
@@ -689,60 +690,4 @@ body.lite *, body.lite *::before, body.lite *::after {
   font-size: 0.82rem;
   color: #475569;
 }
-/* =========================================================
-   PERFORMANCE FIXES (visual design unchanged)
-   - background-attachment:fixed forced a full repaint on every scroll frame; the same
-     gradients now live on a fixed layer that the GPU composites without repainting.
-   - backdrop-filter on every card was the main scroll-jank source; the cards are 94% opaque
-     so blur(6px) was practically invisible.
-   ========================================================= */
-
-:root { background-color: #F4F8F6; }
-:root::before {
-  content: ""; position: fixed; inset: 0; z-index: -3; pointer-events: none;
-  background-image: radial-gradient(45% 38% at 12% 14%, rgba(0, 106, 78, 0.08) 0%, transparent 70%),
-    radial-gradient(35% 30% at 88% 18%, rgba(244, 42, 65, 0.05) 0%, transparent 65%),
-    radial-gradient(50% 42% at 80% 85%, rgba(43, 122, 155, 0.08) 0%, transparent 70%),
-    radial-gradient(45% 35% at 20% 80%, rgba(196, 154, 69, 0.06) 0%, transparent 70%);
-  transform: translateZ(0);
-}
-body { background: transparent !important; }
-/* these two layers were painted underneath the opaque body background (invisible); removing them saves two full-screen composited layers */
-body::before, body::after { display: none !important; }
-.card, .bd-kpi { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
-
-/* DARK THEME FIX: the light page colour and white glass cards were hard-coded, so light text
-   (var(--ink)) landed on a white background in dark mode and looked "missing". */
-:root[data-theme=dark] { background-color: var(--bg); }
-:root[data-theme=dark] .card, :root[data-theme=dark] .bd-kpi { background: rgba(15, 38, 32, 0.94); }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme=light]) { background-color: var(--bg); }
-  :root:not([data-theme=light]) .card, :root:not([data-theme=light]) .bd-kpi { background: rgba(15, 38, 32, 0.94); }
-}
-
-/* cards: entrance animation must never leave content invisible (fill backwards, not both) and only plays on first load */
-.card { animation-fill-mode: backwards !important; }
-.settled .card { animation: none !important; }
-.bar { contain: paint; }
-/* explicit properties instead of "all" so hover/focus don't transition layout properties */
-.btn, .bd-nav a { transition: transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s, background-color .25s, color .25s, border-color .25s, opacity .25s !important; }
-/* off-screen decorative animations are paused by assets/perf.js */
-.perf-off, .perf-off *, .perf-off *::before, .perf-off *::after { animation-play-state: paused !important; }
-
-/* DARK THEME FIX (text that used the dark-green brand colour on dark panels was unreadable) */
-:root[data-theme=dark] :is(.slide h2, label.f, .big, .bd-brand-title, .noscript-note, .row > h2) { color: var(--ink); }
-:root[data-theme=dark] .msg.a { background: var(--emsoft); border-color: var(--line); color: var(--ink); }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme=light]) :is(.slide h2, label.f, .big, .bd-brand-title, .noscript-note, .row > h2) { color: var(--ink); }
-  :root:not([data-theme=light]) .msg.a { background: var(--emsoft); border-color: var(--line); color: var(--ink); }
-}
-
-.map-title { color: #004D3A; }
-:root[data-theme=dark] .map-title, :root[data-theme=dark] main a:not([class]) { color: var(--ink); }
-:root[data-theme=dark] main a:not([class]) { color: var(--em); }
-:root[data-theme=dark] .layer[aria-pressed=true] { background: var(--emsoft); }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme=light]) .map-title { color: var(--ink); }
-  :root:not([data-theme=light]) main a:not([class]) { color: var(--em); }
-  :root:not([data-theme=light]) .layer[aria-pressed=true] { background: var(--emsoft); }
-}
+.mapph { color: #1E2D3D !important; }

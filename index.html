@@ -484,11 +484,9 @@
 <!-- <script type="module" src="assets/intro.js"></script> -->
  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
-    const satMap = L.map('bd-satellite-map', { scrollWheelZoom: false }).setView([23.7808, 90.3500], 7);
-
-    satMap.on('click', () => satMap.scrollWheelZoom.enable()); satMap.on('mouseout', () => satMap.scrollWheelZoom.disable()); // wheel scrolls the page; zoom with the wheel only after clicking the map
+    const satMap = L.map('bd-satellite-map').setView([23.7808, 90.3500], 7);
     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-      attribution: 'Tiles &copy; Esri', updateWhenZooming: false, keepBuffer: 1
+      attribution: 'Tiles &copy; Esri'
     }).addTo(satMap);
     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}').addTo(satMap);
 
@@ -509,6 +507,5 @@
       satMap.flyTo([lat, lng], 14, { duration: 1.5 });
     }
   </script>
-<script src="assets/perf.js" defer></script>
 </body>
 </html>
